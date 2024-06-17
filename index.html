@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Word Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>ALPHABET CLUES</h1>
+        <p>Find the hidden answers for each letter of the alphabet. Each answer will reveal a letter in another hidden word as shown by the tile number.</p>
+        <div class="toggle-container">
+            <span id="toggle-text">Auto Check</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="autocheck-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div id="clue-section-container"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

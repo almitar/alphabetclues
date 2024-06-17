@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+}
+#game-container {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+h1 {
+    font-size: 24px; /* Smaller font size for the h1 */
+}
+.clue-section {
+    margin-bottom: 30px;
+}
+.clue {
+    margin-bottom: 10px;
+}
+.clue-type {
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.tile-container {
+    display: flex;
+    margin-bottom: 10px;
+}
+.tile-wrapper {
+    position: relative;
+}
+.tile {
+    border: 1px solid #000;
+    width: 36px;
+    height: 36px;
+    text-align: center;
+    line-height: 36px;
+    margin-right: 5px;
+    font-size: 1.2em;
+    padding: 0;
+    text-transform: uppercase; /* Ensure user inputs are capitalized */
+}
+.tile.incorrect {
+    background-color: #ffcccc;
+}
+.tile-index {
+    position: absolute;
+    bottom: 1px;
+    right: 8px;
+    font-size: 0.7em;
+    color: #000;
+}
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    margin-left: 10px;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 20px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
