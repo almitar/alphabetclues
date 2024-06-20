@@ -18,19 +18,9 @@ function initializeGame() {
         })
         .then(data => {
             clues = data.clues;
-            revealMapping = data.revealMapping;
 
-            // Generate reverse mappings automatically
-            Object.keys(revealMapping).forEach(key => {
-                const mapping = revealMapping[key];
-                const targetClueLetter = clues[mapping.targetClueIndex].letter;
-                revealMapping[targetClueLetter] = {
-                    sourceLetterIndex: mapping.targetLetterIndex,
-                    targetClueIndex: clues.findIndex(clue => clue.letter === key),
-                    targetLetterIndex: mapping.sourceLetterIndex,
-                    index: mapping.index
-                };
-            });
+            // Generate reveal mappings
+            generateRevealMappings();
 
             setupGame();
         })
@@ -40,6 +30,95 @@ function initializeGame() {
         });
 }
 
+function generateRevealMappings() {
+    let success = false;
+    const maxRetries = 10; // Maximum number of retries to find a valid mapping
+
+    for (let attempt = 0; attempt < maxRetries && !success; attempt++) {
+        success = tryGenerateMappings();
+    }
+
+    if (!success) {
+        console.error('Failed to generate valid mappings after maximum retries.');
+        alert('Failed to generate puzzle mappings. Please try again.');
+    }
+}
+
+function tryGenerateMappings() {
+    revealMapping = {}; // Reset reveal mapping
+    const letterElements = [];
+    clues.forEach((clue, clueIndex) => {
+        clue.answer.split('').forEach((letter, letterIndex) => {
+            letterElements.push({ clueIndex, letterIndex, letter });
+        });
+    });
+
+    const percentage = 40; // Percentage of letters to assign numbers
+    const totalLetters = letterElements.length;
+    const lettersToAssign = Math.floor(totalLetters * (percentage / 100));
+
+    // Ensure every answer has at least one letter mapped
+    const selectedLetters = [];
+    const letterGroups = {};
+
+    clues.forEach((clue, clueIndex) => {
+        const letterIndexes = clue.answer.split('').map((letter, letterIndex) => ({ clueIndex, letterIndex, letter }));
+        shuffleArray(letterIndexes);
+        selectedLetters.push(letterIndexes[0]); // Select one letter from each answer
+    });
+
+    // Randomly select remaining letters based on percentage
+    const remainingLetters = letterElements.filter(element => !selectedLetters.some(sel => sel.clueIndex === element.clueIndex && sel.letterIndex === element.letterIndex));
+    shuffleArray(remainingLetters);
+    selectedLetters.push(...remainingLetters.slice(0, Math.max(0, lettersToAssign - selectedLetters.length)));
+
+    // Group selected letters by their character
+    selectedLetters.forEach(letterElement => {
+        const letter = letterElement.letter;
+        if (!letterGroups[letter]) {
+            letterGroups[letter] = [];
+        }
+        letterGroups[letter].push(letterElement);
+    });
+
+    const usedNumbers = new Set(); // Set to keep track of used numbers
+    let currentNumber;
+
+    // Attempt to assign data values to letter pairs
+    for (const letter in letterGroups) {
+        const group = letterGroups[letter];
+        if (group.length > 1) {
+            shuffleArray(group); // Shuffle the group to randomize pairs
+            for (let i = 0; i < group.length - 1; i += 2) {
+                do {
+                    currentNumber = getRandomInt(1, 100); // Adjust the range here
+                } while (usedNumbers.has(currentNumber)); // Ensure the number hasn't been used
+                usedNumbers.add(currentNumber); // Add the number to the set of used numbers
+                revealMapping[`${group[i].clueIndex}-${group[i].letterIndex}`] = {
+                    targetClueIndex: group[i + 1].clueIndex,
+                    targetLetterIndex: group[i + 1].letterIndex,
+                    index: currentNumber
+                };
+                revealMapping[`${group[i + 1].clueIndex}-${group[i + 1].letterIndex}`] = {
+                    targetClueIndex: group[i].clueIndex,
+                    targetLetterIndex: group[i].letterIndex,
+                    index: currentNumber
+                };
+            }
+        }
+    }
+
+    // Check if each clue has at least one mapping
+    let allCluesMapped = true;
+    clues.forEach((clue, clueIndex) => {
+        const hasMapping = clue.answer.split('').some((_, letterIndex) => revealMapping.hasOwnProperty(`${clueIndex}-${letterIndex}`));
+        if (!hasMapping) {
+            allCluesMapped = false;
+        }
+    });
+
+    return allCluesMapped;
+}
 
 function setupGame() {
     const container = document.getElementById('clue-section-container');
@@ -69,20 +148,18 @@ function setupGame() {
             tile.dataset.tileIndex = i;
             tile.oninput = () => handleInput(index, i, clue.answer);
             tile.onkeydown = (e) => handleKeydown(e, index, i);
-            
-            // Check if this tile should have an index
-            Object.keys(revealMapping).forEach(key => {
-                const mapping = revealMapping[key];
-                if ((mapping.sourceLetterIndex === i && clues[index].letter === key) || 
-                    (mapping.targetLetterIndex === i && index === mapping.targetClueIndex)) {
-                    const indexLabel = document.createElement('span');
-                    indexLabel.className = 'tile-index';
-                    indexLabel.innerText = mapping.index;
-                    tileWrapper.appendChild(indexLabel);
-                    tile.classList.add('index-' + mapping.index);
-                    tile.dataset.index = mapping.index;
-                }
-            });
+            tile.onfocus = () => handleFocus(index, i);
+            tile.onblur = () => handleBlur(index, i);
+
+            const mappingKey = `${index}-${i}`;
+            if (revealMapping[mappingKey]) {
+                const indexLabel = document.createElement('span');
+                indexLabel.className = 'tile-index';
+                indexLabel.innerText = revealMapping[mappingKey].index;
+                tileWrapper.appendChild(indexLabel);
+                tile.classList.add('index-' + revealMapping[mappingKey].index);
+                tile.dataset.index = revealMapping[mappingKey].index;
+            }
 
             tileWrapper.appendChild(tile);
             tileContainer.appendChild(tileWrapper);
@@ -117,6 +194,26 @@ function setupGame() {
     });
 }
 
+function handleFocus(clueIndex, tileIndex) {
+    const mappingKey = `${clueIndex}-${tileIndex}`;
+    if (revealMapping[mappingKey]) {
+        const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
+        const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
+        document.getElementById(`answer-${clueIndex}-${tileIndex}`).classList.add('highlight');
+        targetTile.classList.add('highlight');
+    }
+}
+
+function handleBlur(clueIndex, tileIndex) {
+    const mappingKey = `${clueIndex}-${tileIndex}`;
+    if (revealMapping[mappingKey]) {
+        const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
+        const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
+        document.getElementById(`answer-${clueIndex}-${tileIndex}`).classList.remove('highlight');
+        targetTile.classList.remove('highlight');
+    }
+}
+
 function handleInput(clueIndex, tileIndex, correctAnswer) {
     const tile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
     tile.value = tile.value.toUpperCase(); // Ensure input is capitalized
@@ -124,7 +221,9 @@ function handleInput(clueIndex, tileIndex, correctAnswer) {
 
     checkTile(clueIndex, tileIndex, correctAnswer, tile);
 
-    if (userInput !== '') {
+    if (userInput === '') {
+        clearTile(tile, clueIndex, tileIndex);
+    } else {
         focusNextTile(clueIndex, tileIndex);
     }
 }
@@ -148,24 +247,14 @@ function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
 }
 
 function propagateLetter(clueIndex, tileIndex, value) {
-    // Check if this clue has a reveal mapping
-    const clueLetter = clues[clueIndex].letter;
-    if (revealMapping[clueLetter] && revealMapping[clueLetter].sourceLetterIndex === tileIndex) {
-        const { targetClueIndex, targetLetterIndex } = revealMapping[clueLetter];
+    const mappingKey = `${clueIndex}-${tileIndex}`;
+    if (revealMapping[mappingKey]) {
+        const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
         targetTile.value = value.toUpperCase(); // Populate regardless of correctness
         targetTile.dataset.revealed = 'true'; // Mark the tile as revealed
+        targetTile.classList.add('highlight');
     }
-
-    // Check if this tile should reveal another tile based on reverse mapping
-    Object.keys(revealMapping).forEach(key => {
-        const mapping = revealMapping[key];
-        if (mapping.targetClueIndex === clueIndex && mapping.targetLetterIndex === tileIndex) {
-            const sourceTile = document.getElementById(`answer-${mapping.targetClueIndex}-${mapping.targetLetterIndex}`);
-            sourceTile.value = value.toUpperCase(); // Populate regardless of correctness
-            sourceTile.dataset.revealed = 'true'; // Mark the tile as revealed
-        }
-    });
 }
 
 function handleKeydown(event, clueIndex, tileIndex) {
@@ -174,12 +263,29 @@ function handleKeydown(event, clueIndex, tileIndex) {
     if (event.key === 'Backspace') {
         event.preventDefault();
         if (tile.value !== '') {
-            clearTile(tile);
+            clearTile(tile, clueIndex, tileIndex);
         } else {
             if (!autocheck) {
                 handleBackspaceNoAutoCheck(clueIndex, tileIndex);
             } else {
                 handleBackspaceAutoCheck(clueIndex, tileIndex);
+            }
+        }
+    } else if (event.key === 'Delete') {
+        event.preventDefault();
+        if (tile.value !== '') {
+            clearTile(tile, clueIndex, tileIndex);
+            const nextTile = getNextTile(clueIndex, tileIndex);
+            if (nextTile) {
+                nextTile.focus();
+            }
+        } else {
+            const previousTile = getPreviousTile(clueIndex, tileIndex);
+            if (previousTile) {
+                previousTile.focus();
+                if (previousTile.value !== '') {
+                    clearTile(previousTile, parseInt(previousTile.dataset.clueIndex), parseInt(previousTile.dataset.tileIndex));
+                }
             }
         }
     } else if (event.key === 'ArrowLeft') {
@@ -188,25 +294,80 @@ function handleKeydown(event, clueIndex, tileIndex) {
     } else if (event.key === 'ArrowRight') {
         event.preventDefault();
         moveRight(clueIndex, tileIndex);
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        moveToPreviousClue(clueIndex, tileIndex);
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        moveToNextClue(clueIndex, tileIndex);
     }
 }
+
+function moveToPreviousClue(clueIndex, tileIndex) {
+    let previousClueIndex = clueIndex - 1;
+
+    if (previousClueIndex < 0) {
+        previousClueIndex = clues.length - 1; // Wrap around to the last clue
+    }
+
+    const previousClueLength = clues[previousClueIndex].answer.length;
+    const targetTileIndex = Math.min(tileIndex, previousClueLength - 1); // Ensure we don't go out of bounds
+
+    const previousTile = document.getElementById(`answer-${previousClueIndex}-${targetTileIndex}`);
+    if (previousTile) {
+        previousTile.focus();
+    }
+}
+
+function moveToNextClue(clueIndex, tileIndex) {
+    let nextClueIndex = clueIndex + 1;
+
+    if (nextClueIndex >= clues.length) {
+        nextClueIndex = 0; // Wrap around to the first clue
+    }
+
+    const nextClueLength = clues[nextClueIndex].answer.length;
+    const targetTileIndex = Math.min(tileIndex, nextClueLength - 1); // Ensure we don't go out of bounds
+
+    const nextTile = document.getElementById(`answer-${nextClueIndex}-${targetTileIndex}`);
+    if (nextTile) {
+        nextTile.focus();
+    }
+}
+
+
+function clearTile(tile, clueIndex, tileIndex) {
+    tile.value = '';
+    tile.dataset.revealed = 'false';
+    tile.classList.remove('incorrect');
+
+    // Clear the propagated letter if in autocheck mode or if the user is not in autocheck mode
+    if (!autocheck || (autocheck && !tile.disabled)) {
+        const mappingKey = `${clueIndex}-${tileIndex}`;
+        if (revealMapping[mappingKey]) {
+            const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
+            const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
+            if (!autocheck || (autocheck && !targetTile.disabled)) {
+                targetTile.value = '';
+                targetTile.dataset.revealed = 'false';
+                targetTile.classList.remove('incorrect');
+            }
+        }
+    }
+}
+
 
 function handleBackspaceNoAutoCheck(clueIndex, tileIndex) {
     const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
     if (currentTile.value !== '') {
-        clearTile(currentTile);
+        clearTile(currentTile, clueIndex, tileIndex);
         return;
     }
     
     let previousTile = getPreviousTile(clueIndex, tileIndex);
 
     if (previousTile) {
-        if (previousTile.classList.contains('index-' + getTileIndex(previousTile))) {
-            clearTile(previousTile);
-            clearTile(document.getElementById(`answer-${revealMapping[clues[clueIndex].letter].targetClueIndex}-${revealMapping[clues[clueIndex].letter].targetLetterIndex}`));
-        } else {
-            clearTile(previousTile);
-        }
+        clearTile(previousTile, previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
         previousTile.focus();
     }
 }
@@ -214,47 +375,26 @@ function handleBackspaceNoAutoCheck(clueIndex, tileIndex) {
 function handleBackspaceAutoCheck(clueIndex, tileIndex) {
     const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
     if (currentTile.value !== '') {
-        clearTile(currentTile);
+        clearTile(currentTile, clueIndex, tileIndex);
         return;
     }
 
     let previousTile = getPreviousTile(clueIndex, tileIndex);
 
-    console.log(`Starting Backspace: clueIndex=${clueIndex}, tileIndex=${tileIndex}`);
-
     while (previousTile && previousTile.value.toLowerCase() === clues[previousTile.dataset.clueIndex]?.answer[previousTile.dataset.tileIndex]?.toLowerCase()) {
-        console.log(`Skipping correct tile: clueIndex=${previousTile.dataset.clueIndex}, tileIndex=${previousTile.dataset.tileIndex}`);
         previousTile = getPreviousTile(previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
     }
 
     while (previousTile && previousTile.disabled) {
-        console.log(`Skipping disabled tile: clueIndex=${previousTile.dataset.clueIndex}, tileIndex=${previousTile.dataset.tileIndex}`);
         previousTile = getPreviousTile(previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
     }
 
     if (previousTile) {
-        if (previousTile.value === '') {
-            console.log(`Focusing empty tile: clueIndex=${previousTile.dataset.clueIndex}, tileIndex=${previousTile.dataset.tileIndex}`);
-            previousTile.focus();
-        } else if (previousTile.classList.contains('incorrect')) {
-            console.log(`Clearing incorrect tile: clueIndex=${previousTile.dataset.clueIndex}, tileIndex=${previousTile.dataset.tileIndex}`);
-            clearTile(previousTile);
-            if (previousTile.classList.contains('index-' + getTileIndex(previousTile))) {
-                // Clear the corresponding propagated letter tile
-                const mapping = revealMapping[clues[previousTile.dataset.clueIndex].letter];
-                clearTile(document.getElementById(`answer-${mapping.targetClueIndex}-${mapping.targetLetterIndex}`));
-            }
-            previousTile.focus();
-        } else if (previousTile.classList.contains('index-' + getTileIndex(previousTile))) {
-            console.log(`Clearing index tile: clueIndex=${previousTile.dataset.clueIndex}, tileIndex=${previousTile.dataset.tileIndex}`);
-            // Clear the value of the index tile and its corresponding tile
-            const mapping = revealMapping[clues[previousTile.dataset.clueIndex].letter];
-            clearTile(previousTile);
-            clearTile(document.getElementById(`answer-${mapping.targetClueIndex}-${mapping.targetLetterIndex}`));
-            previousTile.focus();
-        }
+        clearTile(previousTile, previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
+        previousTile.focus();
     }
 }
+
 
 function getPreviousTile(clueIndex, tileIndex) {
     let previousTile = document.getElementById(`answer-${clueIndex}-${tileIndex - 1}`);
@@ -275,15 +415,33 @@ function getPreviousTile(clueIndex, tileIndex) {
         }
     }
 
-    console.log(`getPreviousTile: clueIndex=${previousTile?.dataset.clueIndex}, tileIndex=${previousTile?.dataset.tileIndex}`);
     return previousTile;
 }
 
+function getNextTile(clueIndex, tileIndex) {
+    let nextTile = document.getElementById(`answer-${clueIndex}-${tileIndex + 1}`);
 
-function clearTile(tile) {
-    tile.value = '';
-    tile.dataset.revealed = 'false';
-    tile.classList.remove('incorrect');
+    if (!nextTile) {
+        for (let i = clueIndex + 1; i < clues.length; i++) {
+            for (let j = 0; j < clues[i].answer.length; j++) {
+                nextTile = document.getElementById(`answer-${i}-${j}`);
+                if (nextTile) break;
+            }
+            if (nextTile) break;
+        }
+    }
+
+    if (!nextTile) {
+        for (let i = 0; i <= clueIndex; i++) {
+            for (let j = 0; j < clues[i].answer.length; j++) {
+                nextTile = document.getElementById(`answer-${i}-${j}`);
+                if (nextTile) break;
+            }
+            if (nextTile) break;
+        }
+    }
+
+    return nextTile;
 }
 
 
@@ -317,59 +475,17 @@ function moveRight(clueIndex, tileIndex) {
     }
 }
 
-function getNextTile(clueIndex, tileIndex) {
-    let nextTile = document.getElementById(`answer-${clueIndex}-${tileIndex + 1}`);
-
-    if (!nextTile) {
-        for (let i = clueIndex + 1; i < clues.length; i++) {
-            for (let j = 0; j < clues[i].answer.length; j++) {
-                nextTile = document.getElementById(`answer-${i}-${j}`);
-                if (nextTile) break;
-            }
-            if (nextTile) break;
-        }
-    }
-
-    if (!nextTile) {
-        for (let i = 0; i <= clueIndex; i++) {
-            for (let j = 0; j < clues[i].answer.length; j++) {
-                nextTile = document.getElementById(`answer-${i}-${j}`);
-                if (nextTile) break;
-            }
-            if (nextTile) break;
-        }
-    }
-
-    return nextTile;
-}
-
-
 function deletePropagatedLetter(clueIndex, tileIndex) {
-    const clueLetter = clues[clueIndex].letter;
-
-    // Handle direct mapping
-    if (revealMapping[clueLetter] && revealMapping[clueLetter].sourceLetterIndex === tileIndex) {
-        const { targetClueIndex, targetLetterIndex } = revealMapping[clueLetter];
+    const mappingKey = `${clueIndex}-${tileIndex}`;
+    if (revealMapping[mappingKey]) {
+        const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-        if (targetTile && targetTile.classList.contains('index-' + revealMapping[clueLetter].index)) {
+        if (targetTile && targetTile.classList.contains('index-' + revealMapping[mappingKey].index)) {
             targetTile.value = ''; // Clear the propagated letter
             targetTile.dataset.revealed = 'false'; // Mark it as not revealed
             targetTile.classList.remove('incorrect');
         }
     }
-
-    // Handle reverse mapping
-    Object.keys(revealMapping).forEach(key => {
-        const mapping = revealMapping[key];
-        if (mapping.targetClueIndex === clueIndex && mapping.targetLetterIndex === tileIndex) {
-            const sourceTile = document.getElementById(`answer-${mapping.targetClueIndex}-${mapping.targetLetterIndex}`);
-            if (sourceTile && sourceTile.classList.contains('index-' + mapping.index)) {
-                sourceTile.value = ''; // Clear the propagated letter
-                sourceTile.dataset.revealed = 'false'; // Mark it as not revealed
-                sourceTile.classList.remove('incorrect');
-            }
-        }
-    });
 }
 
 function getTileIndex(tile) {
@@ -416,6 +532,18 @@ function checkAllTiles() {
             }
         }
     });
+}
+
+// Utility functions
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (min + max + 1)) + min;
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 // Initialize the game immediately

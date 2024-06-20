@@ -42,6 +42,9 @@ h1 {
 .tile.incorrect {
     background-color: #ffcccc;
 }
+.tile.revealed {
+    background-color: #e0f7fa; /* Light blue background for revealed tiles */
+}
 .tile-index {
     position: absolute;
     bottom: 1px;
@@ -94,4 +97,8 @@ input:checked + .slider {
 }
 input:checked + .slider:before {
     transform: translateX(20px);
+}
+
+.tile.highlight {
+    background-color: yellow;
 }
