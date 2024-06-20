@@ -1,6 +1,6 @@
 {
     "clues": [
-      { "letter": "A", "clue": "Let in", "type": "starts", "answer": "admitted" },
+      { "letter": "A", "clue": "Appoints as a minister", "type": "starts", "answer": "ordains" },
       { "letter": "B", "clue": "Total dud", "type": "starts", "answer": "bomb" },
       { "letter": "C", "clue": "What might turn lay to layover?", "type": "contains", "answer": "autocomplete" },
       { "letter": "D", "clue": "Crab or lobster", "type": "starts", "answer": "decapod" },

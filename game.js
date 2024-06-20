@@ -225,29 +225,42 @@ function setupGame() {
             }
         });
         if (autocheck) {
+            clearAllHighlights(); // Clear highlights before checking tiles
             checkAllTiles();
         }
     });
+
+    clearAllHighlights();
 }
 
 function handleFocus(clueIndex, tileIndex) {
+    clearAllHighlights();
+
     const mappingKey = `${clueIndex}-${tileIndex}`;
+    const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+    currentTile.classList.add('highlight');
     if (revealMapping[mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-        document.getElementById(`answer-${clueIndex}-${tileIndex}`).classList.add('highlight');
         targetTile.classList.add('highlight');
     }
 }
 
 function handleBlur(clueIndex, tileIndex) {
     const mappingKey = `${clueIndex}-${tileIndex}`;
+    const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+    currentTile.classList.remove('highlight');
     if (revealMapping[mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-        document.getElementById(`answer-${clueIndex}-${tileIndex}`).classList.remove('highlight');
         targetTile.classList.remove('highlight');
     }
+}
+
+function clearAllHighlights() {
+    document.querySelectorAll('.tile').forEach(tile => {
+        tile.classList.remove('highlight');
+    });
 }
 
 function handleInput(clueIndex, tileIndex, correctAnswer) {
@@ -289,7 +302,6 @@ function propagateLetter(clueIndex, tileIndex, value) {
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
         targetTile.value = value.toUpperCase(); // Populate regardless of correctness
         targetTile.dataset.revealed = 'true'; // Mark the tile as revealed
-        targetTile.classList.add('highlight');
     }
 }
 
@@ -556,6 +568,7 @@ function focusNextTile(clueIndex, tileIndex) {
 }
 
 function checkAllTiles() {
+    clearAllHighlights();
     clues.forEach((clue, index) => {
         for (let i = 0; i < clue.answer.length; i++) {
             const tile = document.getElementById(`answer-${index}-${i}`);

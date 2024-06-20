@@ -1,10 +1,10 @@
 {
     "clues": [
-      { "letter": "A", "clue": "Let in", "type": "starts", "answer": "admitted" },
-      { "letter": "B", "clue": "Total dud", "type": "starts", "answer": "bomb" },
-      { "letter": "C", "clue": "What might turn lay to layover?", "type": "contains", "answer": "autocomplete" },
-      { "letter": "D", "clue": "Crab or lobster", "type": "starts", "answer": "decapod" },
-      { "letter": "E", "clue": "Greetings", "type": "starts", "answer": "hellos" },
+      { "letter": "A", "clue": "Flight-related prefix", "type": "starts", "answer": "aero" },
+      { "letter": "B", "clue": "One way to be taken", "type": "contains", "answer": "aback" },
+      { "letter": "C", "clue": "Not require fees to be paid", "type": "contains", "answer": "waivecharges" },
+      { "letter": "D", "clue": "Giving sort", "type": "starts", "answer": "donor" },
+      { "letter": "E", "clue": "Fit to serve", "type": "starts", "answer": "edible" },
       { "letter": "F", "clue": "Block number, for short?", "type": "contains", "answer": "spf" },
       { "letter": "G", "clue": "Wood flooring feature", "type": "starts", "answer": "grain" },
       { "letter": "H", "clue": "Crunchy snack", "type": "starts", "answer": "hardshelltaco" },
@@ -28,4 +28,6 @@
       { "letter": "Z", "clue": "Informal word for many", "type": "starts", "answer": "zillions" }
       ],
       "revealMapping": {}
+  
+  
 }
