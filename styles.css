@@ -102,3 +102,37 @@ input:checked + .slider:before {
 .tile.highlight {
     background-color: yellow;
 }
+
+.level-buttons {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 20px;
+}
+.level-buttons button {
+    border: none;
+    background: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 0 20px 0 0px;
+    padding: 0;
+    color: #888;
+    transition: color 0.3s, font-weight 0.3s;
+    font-size: 14px;
+}
+.level-buttons button:hover {
+    color: #000;
+}
+.level-buttons button.selected {
+    color: #000; /* Highlight selected button */
+    font-weight: bold;
+}
+
+#game-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#toggle-text {
+    font-size: 14px;
+}

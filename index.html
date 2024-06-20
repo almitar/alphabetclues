@@ -10,12 +10,19 @@
     <div id="game-container">
         <h1>ALPHABET CLUES</h1>
         <p>Find the hidden answers for each letter of the alphabet. Each answer will reveal a letter in another hidden word as shown by the tile number.</p>
-        <div class="toggle-container">
-            <span id="toggle-text">Auto Check</span>
-            <label class="toggle-switch">
-                <input type="checkbox" id="autocheck-toggle">
-                <span class="slider"></span>
-            </label>
+        <div id="game-controls">
+            <div class="level-buttons">
+                <button id="easy-level">Easy</button>
+                <button id="medium-level" class="selected">Medium</button>
+                <button id="advanced-level">Advanced</button>
+            </div>
+            <div class="toggle-container">
+                <span id="toggle-text">Auto Check</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autocheck-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
         <div id="clue-section-container"></div>
     </div>

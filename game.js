@@ -1,6 +1,42 @@
 let autocheck = false;
 let clues = [];
 let revealMapping = {};
+let difficultyLevel = 'medium';
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeGame();
+
+    document.getElementById('easy-level').addEventListener('click', () => setDifficultyLevel('easy'));
+    document.getElementById('medium-level').addEventListener('click', () => setDifficultyLevel('medium'));
+    document.getElementById('advanced-level').addEventListener('click', () => setDifficultyLevel('advanced'));
+});
+
+function setDifficultyLevel(level) {
+    difficultyLevel = level;
+    initializeGame(); // Reinitialize the game with the new difficulty level
+    updateSelectedButton(level);
+}
+
+function updateSelectedButton(level) {
+    document.querySelectorAll('.level-buttons button').forEach(button => {
+        button.classList.remove('selected');
+    });
+
+    document.getElementById(`${level}-level`).classList.add('selected');
+}
+
+function getMappingPercentage() {
+    switch (difficultyLevel) {
+        case 'easy':
+            return 80;
+        case 'medium':
+            return 60;
+        case 'advanced':
+            return 40;
+        default:
+            return 80;
+    }
+}
 
 function initializeGame() {
     const currentDate = new Date();
@@ -53,7 +89,7 @@ function tryGenerateMappings() {
         });
     });
 
-    const percentage = 40; // Percentage of letters to assign numbers
+    const percentage = getMappingPercentage(); // Use the difficulty level percentage
     const totalLetters = letterElements.length;
     const lettersToAssign = Math.floor(totalLetters * (percentage / 100));
 
@@ -335,7 +371,6 @@ function moveToNextClue(clueIndex, tileIndex) {
     }
 }
 
-
 function clearTile(tile, clueIndex, tileIndex) {
     tile.value = '';
     tile.dataset.revealed = 'false';
@@ -355,7 +390,6 @@ function clearTile(tile, clueIndex, tileIndex) {
         }
     }
 }
-
 
 function handleBackspaceNoAutoCheck(clueIndex, tileIndex) {
     const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
@@ -394,7 +428,6 @@ function handleBackspaceAutoCheck(clueIndex, tileIndex) {
         previousTile.focus();
     }
 }
-
 
 function getPreviousTile(clueIndex, tileIndex) {
     let previousTile = document.getElementById(`answer-${clueIndex}-${tileIndex - 1}`);
@@ -443,7 +476,6 @@ function getNextTile(clueIndex, tileIndex) {
 
     return nextTile;
 }
-
 
 function moveLeft(clueIndex, tileIndex) {
     let previousTile = getPreviousTile(clueIndex, tileIndex);
@@ -545,6 +577,3 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
-// Initialize the game immediately
-document.addEventListener('DOMContentLoaded', initializeGame);
