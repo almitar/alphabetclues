@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('advanced-level').addEventListener('click', () => setDifficultyLevel('advanced'));
 });
 
+
 function setDifficultyLevel(level) {
     difficultyLevel = level;
     initializeGame(); // Reinitialize the game with the new difficulty level
@@ -28,13 +29,13 @@ function updateSelectedButton(level) {
 function getMappingPercentage() {
     switch (difficultyLevel) {
         case 'easy':
-            return 80;
+            return 90;
         case 'medium':
             return 60;
         case 'advanced':
             return 40;
         default:
-            return 80;
+            return 90;
     }
 }
 
@@ -66,17 +67,18 @@ function initializeGame() {
         });
 }
 
-function generateRevealMappings() {
-    let success = false;
-    const maxRetries = 10; // Maximum number of retries to find a valid mapping
-
-    for (let attempt = 0; attempt < maxRetries && !success; attempt++) {
-        success = tryGenerateMappings();
+function generateRevealMappings(attempt = 0, maxRetries = 10) {
+    if (attempt >= maxRetries) {
+        console.error('Failed to generate valid mappings after maximum retries.');
+        initializeGame(); // Reinitialize the game to regenerate the puzzle
+        return;
     }
 
+    const success = tryGenerateMappings();
+
     if (!success) {
-        console.error('Failed to generate valid mappings after maximum retries.');
-        alert('Failed to generate puzzle mappings. Please try again.');
+        console.log(`Attempt ${attempt + 1} failed, retrying...`);
+        generateRevealMappings(attempt + 1, maxRetries);
     }
 }
 
@@ -156,89 +158,14 @@ function tryGenerateMappings() {
     return allCluesMapped;
 }
 
-function setupGame() {
-    const container = document.getElementById('clue-section-container');
-    container.innerHTML = '';
-
-    clues.forEach((clue, index) => {
-        const clueSection = document.createElement('div');
-        clueSection.className = 'clue-section';
-
-        const clueText = document.createElement('div');
-        clueText.className = 'clue';
-        clueText.innerHTML = `<span class="clue-type">${clue.type === 'contains' ? 'Contains' : 'Starts with'} ${clue.letter}</span><br>${clue.clue}`;
-
-        const tileContainer = document.createElement('div');
-        tileContainer.className = 'tile-container';
-        
-        for (let i = 0; i < clue.answer.length; i++) {
-            const tileWrapper = document.createElement('div');
-            tileWrapper.className = 'tile-wrapper';
-
-            const tile = document.createElement('input');
-            tile.type = 'text';
-            tile.maxLength = 1;
-            tile.className = 'tile autocheckoff';
-            tile.id = `answer-${index}-${i}`;
-            tile.dataset.clueIndex = index;
-            tile.dataset.tileIndex = i;
-            tile.oninput = () => handleInput(index, i, clue.answer);
-            tile.onkeydown = (e) => handleKeydown(e, index, i);
-            tile.onfocus = () => handleFocus(index, i);
-            tile.onblur = () => handleBlur(index, i);
-
-            const mappingKey = `${index}-${i}`;
-            if (revealMapping[mappingKey]) {
-                const indexLabel = document.createElement('span');
-                indexLabel.className = 'tile-index';
-                indexLabel.innerText = revealMapping[mappingKey].index;
-                tileWrapper.appendChild(indexLabel);
-                tile.classList.add('index-' + revealMapping[mappingKey].index);
-                tile.dataset.index = revealMapping[mappingKey].index;
-            }
-
-            tileWrapper.appendChild(tile);
-            tileContainer.appendChild(tileWrapper);
-        }
-
-        const resultText = document.createElement('span');
-        resultText.className = 'result';
-        resultText.id = `result-${index}`;
-
-        clueSection.appendChild(clueText);
-        clueSection.appendChild(tileContainer);
-        clueSection.appendChild(resultText);
-
-        container.appendChild(clueSection);
-    });
-
-    const toggleButton = document.getElementById('autocheck-toggle');
-    toggleButton.addEventListener('change', () => {
-        autocheck = toggleButton.checked;
-        document.querySelectorAll('.tile').forEach(tile => {
-            if (autocheck) {
-                tile.classList.remove('autocheckoff');
-            } else {
-                tile.classList.add('autocheckoff');
-                tile.disabled = false;
-                tile.classList.remove('incorrect');
-            }
-        });
-        if (autocheck) {
-            clearAllHighlights(); // Clear highlights before checking tiles
-            checkAllTiles();
-        }
-    });
-
-    clearAllHighlights();
-}
-
 function handleFocus(clueIndex, tileIndex) {
     clearAllHighlights();
 
     const mappingKey = `${clueIndex}-${tileIndex}`;
     const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
     currentTile.classList.add('highlight');
+    currentTile.dataset.previousValue = currentTile.value; // Store the previous value on focus
+    
     if (revealMapping[mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
@@ -246,34 +173,58 @@ function handleFocus(clueIndex, tileIndex) {
     }
 }
 
-function handleBlur(clueIndex, tileIndex) {
-    const mappingKey = `${clueIndex}-${tileIndex}`;
-    const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
-    currentTile.classList.remove('highlight');
-    if (revealMapping[mappingKey]) {
-        const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
-        const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-        targetTile.classList.remove('highlight');
-    }
-}
+function handleInput(event, clueIndex, tileIndex, correctAnswer) {
+    console.log('handleInput called', clueIndex, tileIndex); // Debug log
 
-function clearAllHighlights() {
-    document.querySelectorAll('.tile').forEach(tile => {
-        tile.classList.remove('highlight');
-    });
-}
-
-function handleInput(clueIndex, tileIndex, correctAnswer) {
     const tile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
-    tile.value = tile.value.toUpperCase(); // Ensure input is capitalized
-    const userInput = tile.value.trim();
+
+   
+    const previousValue = tile.dataset.previousValue || ''; // Store the previous value
+    const userInput = event.target.value.trim().toUpperCase(); // Ensure input is capitalized
+
+    console.log('Previous Value:', previousValue, 'User Input:', userInput); // Debug log
+
+    if (previousValue && previousValue !== userInput) {
+        console.log('Previous value differs, clearing tile'); // Debug log
+        clearTile(tile, clueIndex, tileIndex); // Clear the tile if it has a previous value
+    }
+
+    tile.value = userInput; // Set the new input value
+
+    
+    if(tile.value.length == 2){
+        tile.value = tile.value.replace(previousValue, '');
+    }
+
+    tile.dataset.previousValue = tile.value; // Store the current value as previous for future checks
 
     checkTile(clueIndex, tileIndex, correctAnswer, tile);
 
-    if (userInput === '') {
+    if (tile.value === '') {
         clearTile(tile, clueIndex, tileIndex);
     } else {
         focusNextTile(clueIndex, tileIndex);
+    }
+}
+
+function clearTile(tile, clueIndex, tileIndex) {
+    console.log('clearTile called', clueIndex, tileIndex); // Debug log
+    tile.value = '';
+    tile.dataset.revealed = 'false';
+    tile.classList.remove('incorrect');
+
+    // Clear the propagated letter if in autocheck mode or if the user is not in autocheck mode
+    if (!autocheck || (autocheck && !tile.disabled)) {
+        const mappingKey = `${clueIndex}-${tileIndex}`;
+        if (revealMapping[mappingKey]) {
+            const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
+            const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
+            if (!autocheck || (autocheck && !targetTile.disabled)) {
+                targetTile.value = '';
+                targetTile.dataset.revealed = 'false';
+                targetTile.classList.remove('incorrect');
+            }
+        }
     }
 }
 
@@ -367,41 +318,50 @@ function moveToPreviousClue(clueIndex, tileIndex) {
     }
 }
 
-function moveToNextClue(clueIndex, tileIndex) {
-    let nextClueIndex = clueIndex + 1;
+function focusNextTile(clueIndex, tileIndex) {
+    const clueLength = clues[clueIndex].answer.length;
 
+    // Find the next focusable tile within the same word
+    for (let i = tileIndex + 1; i < clueLength; i++) {
+        const nextTile = document.getElementById(`answer-${clueIndex}-${i}`);
+        if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
+            nextTile.focus();
+            return;
+        }
+    }
+
+    // If no focusable tile is found, cycle back to the first empty or incorrect tile within the word
+    for (let i = 0; i < clueLength; i++) {
+        const nextTile = document.getElementById(`answer-${clueIndex}-${i}`);
+        if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
+            nextTile.focus();
+            return;
+        }
+    }
+
+    // If all tiles in the current word are filled or correct, move to the next clue
+    moveToNextClue(clueIndex);
+}
+
+function moveToNextClue(clueIndex) {
+    let nextClueIndex = clueIndex + 1;
     if (nextClueIndex >= clues.length) {
-        nextClueIndex = 0; // Wrap around to the first clue
+        nextClueIndex = 0; // Wrap around to the first clue if we're at the last one
     }
 
     const nextClueLength = clues[nextClueIndex].answer.length;
-    const targetTileIndex = Math.min(tileIndex, nextClueLength - 1); // Ensure we don't go out of bounds
 
-    const nextTile = document.getElementById(`answer-${nextClueIndex}-${targetTileIndex}`);
-    if (nextTile) {
-        nextTile.focus();
-    }
-}
-
-function clearTile(tile, clueIndex, tileIndex) {
-    tile.value = '';
-    tile.dataset.revealed = 'false';
-    tile.classList.remove('incorrect');
-
-    // Clear the propagated letter if in autocheck mode or if the user is not in autocheck mode
-    if (!autocheck || (autocheck && !tile.disabled)) {
-        const mappingKey = `${clueIndex}-${tileIndex}`;
-        if (revealMapping[mappingKey]) {
-            const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
-            const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-            if (!autocheck || (autocheck && !targetTile.disabled)) {
-                targetTile.value = '';
-                targetTile.dataset.revealed = 'false';
-                targetTile.classList.remove('incorrect');
-            }
+    // Find the first focusable tile in the next clue
+    for (let i = 0; i < nextClueLength; i++) {
+        const nextTile = document.getElementById(`answer-${nextClueIndex}-${i}`);
+        if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
+            nextTile.focus();
+            return;
         }
     }
 }
+
+
 
 function handleBackspaceNoAutoCheck(clueIndex, tileIndex) {
     const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
@@ -538,35 +498,6 @@ function getTileIndex(tile) {
     return indexClass ? indexClass.split('-')[1] : null;
 }
 
-function focusNextTile(clueIndex, tileIndex) {
-    let nextTile = document.getElementById(`answer-${clueIndex}-${tileIndex + 1}`);
-
-    if (!nextTile) {
-        for (let i = clueIndex + 1; i < clues.length; i++) {
-            for (let j = 0; j < clues[i].answer.length; j++) {
-                nextTile = document.getElementById(`answer-${i}-${j}`);
-                if (nextTile && nextTile.value.trim() === '') {
-                    nextTile.focus();
-                    return;
-                }
-            }
-        }
-        for (let i = 0; i <= clueIndex; i++) {
-            for (let j = 0; j < clues[i].answer.length; j++) {
-                nextTile = document.getElementById(`answer-${i}-${j}`);
-                if (nextTile && nextTile.value.trim() === '') {
-                    nextTile.focus();
-                    return;
-                }
-            }
-        }
-    } else if (nextTile.value.trim() !== '') {
-        focusNextTile(clueIndex, tileIndex + 1);
-    } else {
-        nextTile.focus();
-    }
-}
-
 function checkAllTiles() {
     clearAllHighlights();
     clues.forEach((clue, index) => {
@@ -589,4 +520,101 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+}
+
+function clearAllHighlights() {
+    document.querySelectorAll('.tile').forEach(tile => {
+        tile.classList.remove('highlight');
+    });
+}
+
+function handleBlur(clueIndex, tileIndex) {
+    const mappingKey = `${clueIndex}-${tileIndex}`;
+    const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+    currentTile.classList.remove('highlight');
+    if (revealMapping[mappingKey]) {
+        const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
+        const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
+        targetTile.classList.remove('highlight');
+    }
+}
+
+function setupGame() {
+    const container = document.getElementById('clue-section-container');
+    container.innerHTML = '';
+
+    clues.forEach((clue, index) => {
+        const clueSection = document.createElement('div');
+        clueSection.className = 'clue-section';
+
+        const clueText = document.createElement('div');
+        clueText.className = 'clue';
+        clueText.innerHTML = `<span class="clue-type">${clue.type === 'contains' ? 'Contains' : 'Starts with'} ${clue.letter}</span><br>${clue.clue}`;
+
+        const tileContainer = document.createElement('div');
+        tileContainer.className = 'tile-container';
+
+        for (let i = 0; i < clue.answer.length; i++) {
+            const tileWrapper = document.createElement('div');
+            tileWrapper.className = 'tile-wrapper';
+
+            const tile = document.createElement('input');
+            tile.type = 'text';
+            tile.maxLength = 2;
+            tile.className = 'tile autocheckoff';
+            tile.id = `answer-${index}-${i}`;
+            tile.dataset.clueIndex = index;
+            tile.dataset.tileIndex = i;
+            tile.onfocus = () => handleFocus(index, i); // Attach handleFocus event
+            tile.oninput = (event) => {
+                console.log(`Input event fired: clueIndex=${index}, tileIndex=${i}`);
+                handleInput(event, index, i, clue.answer);
+            }; // Attach handleInput event
+            tile.onkeydown = (e) => handleKeydown(e, index, i);
+            tile.onblur = () => handleBlur(index, i); // Attach handleBlur event
+
+            const mappingKey = `${index}-${i}`;
+            if (revealMapping[mappingKey]) {
+                const indexLabel = document.createElement('span');
+                indexLabel.className = 'tile-index';
+                indexLabel.innerText = revealMapping[mappingKey].index;
+                tileWrapper.appendChild(indexLabel);
+                tile.classList.add('index-' + revealMapping[mappingKey].index);
+                tile.dataset.index = revealMapping[mappingKey].index;
+            }
+
+            tileWrapper.appendChild(tile);
+            tileContainer.appendChild(tileWrapper);
+        }
+
+        const resultText = document.createElement('span');
+        resultText.className = 'result';
+        resultText.id = `result-${index}`;
+
+        clueSection.appendChild(clueText);
+        clueSection.appendChild(tileContainer);
+        clueSection.appendChild(resultText);
+
+        container.appendChild(clueSection);
+    });
+
+    const toggleButton = document.getElementById('autocheck-toggle');
+    toggleButton.addEventListener('change', () => {
+        autocheck = toggleButton.checked;
+        document.querySelectorAll('.tile').forEach(tile => {
+            if (autocheck) {
+                tile.classList.remove('autocheckoff');
+            } else {
+                tile.classList.add('autocheckoff');
+                tile.disabled = false;
+                tile.classList.remove('incorrect');
+            }
+        });
+        if (autocheck) {
+            clearAllHighlights(); // Clear highlights before checking tiles
+            checkAllTiles();
+        }
+    });
+
+    clearAllHighlights();
 }
