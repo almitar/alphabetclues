@@ -2,159 +2,159 @@
   "clues": [
     {
       "letter": "A",
-      "clue": "Appoints as a minister",
-      "type": "contains",
-      "answer": "ordains"
+      "clue": "Puts on TV",
+      "type": "starts",
+      "answer": "airs"
     },
     {
       "letter": "B",
-      "clue": "Annoying bedmate",
+      "clue": "Holder of sale goods",
       "type": "starts",
-      "answer": "blankethog"
+      "answer": "bin"
     },
     {
       "letter": "C",
-      "clue": "What might turn lay to layover?",
-      "type": "contains",
-      "answer": "autocomplete"
+      "clue": "Incessant talker",
+      "type": "starts",
+      "answer": "chatterbox"
     },
     {
       "letter": "D",
-      "clue": "Crab or lobster?",
-      "type": "starts",
-      "answer": "decapod"
+      "clue": "Norse war god",
+      "type": "contains",
+      "answer": "odin"
     },
     {
       "letter": "E",
-      "clue": "Greetings",
+      "clue": "Move, to a real estate agent",
       "type": "contains",
-      "answer": "hellos"
+      "answer": "relo"
     },
     {
       "letter": "F",
-      "clue": "Innocent sort",
+      "clue": "The Sopranos' subject",
       "type": "contains",
-      "answer": "naif"
+      "answer": "mafia"
     },
     {
       "letter": "G",
-      "clue": "Starting assumptions",
+      "clue": "Relaxes enforcement",
       "type": "starts",
-      "answer": "givens"
+      "answer": "goessoft"
     },
     {
       "letter": "H",
-      "clue": "Whence dawn breaks",
-      "type": "contains",
-      "answer": "theeast"
+      "clue": "Mass destruction",
+      "type": "starts",
+      "answer": "havoc"
     },
     {
       "letter": "I",
-      "clue": "Septet in Dante's 'Purgatorio'",
+      "clue": "Be a passenger",
       "type": "contains",
-      "answer": "sins"
+      "answer": "ride"
     },
     {
       "letter": "J",
-      "clue": "Rapper ___-Z",
+      "clue": "Alternative to Newark or La Guardia",
       "type": "starts",
-      "answer": "jay"
+      "answer": "jfk"
     },
     {
       "letter": "K",
-      "clue": "Accelerated, in a way",
+      "clue": "Hop, ___ and a jump",
       "type": "contains",
-      "answer": "fasttracked"
+      "answer": "skip"
     },
     {
       "letter": "L",
-      "clue": "The Solomon's lily's smell of rotting fruit, to flies",
+      "clue": "Gift upon arriving in Honolulu",
       "type": "starts",
-      "answer": "lure"
+      "answer": "lei"
     },
     {
       "letter": "M",
-      "clue": "Actress Jovovich of 'The Fifth Element'",
+      "clue": "Chow ___",
       "type": "starts",
-      "answer": "milla"
+      "answer": "mein"
     },
     {
       "letter": "N",
-      "clue": "Facts and figures, in brief",
-      "type": "contains",
-      "answer": "info"
+      "clue": "Calm down ... stop crying",
+      "type": "starts",
+      "answer": "nomoretears"
     },
     {
       "letter": "O",
-      "clue": "Where domestic meals are enjoyed",
-      "type": "contains",
-      "answer": "familydiningroom"
+      "clue": "___ law (electricity principle)",
+      "type": "starts",
+      "answer": "ohms"
     },
     {
       "letter": "P",
-      "clue": "Attack, as with snowballs",
-      "type": "starts",
-      "answer": "pelt"
+      "clue": "In pieces",
+      "type": "contains",
+      "answer": "apart"
     },
     {
       "letter": "Q",
-      "clue": "Lawyer's title: Abbr",
-      "type": "contains",
-      "answer": "esq"
+      "clue": "Ruler of a buzzing kingdom",
+      "type": "starts",
+      "answer": "queenbee"
     },
     {
       "letter": "R",
-      "clue": "Illuminated from behind",
-      "type": "starts",
-      "answer": "rearlit"
+      "clue": "Gay Nineties, e.g",
+      "type": "contains",
+      "answer": "era"
     },
     {
       "letter": "S",
-      "clue": "Embroidered, e.g",
+      "clue": "Asparagus units",
       "type": "starts",
-      "answer": "sewn"
+      "answer": "spears"
     },
     {
       "letter": "T",
-      "clue": "Filling station?",
+      "clue": "Duck or one of its colors",
       "type": "starts",
-      "answer": "tooth"
+      "answer": "teal"
     },
     {
       "letter": "U",
-      "clue": "Impolite sounds at the dinner table",
+      "clue": "Spoil",
       "type": "contains",
-      "answer": "slurps"
+      "answer": "turn"
     },
     {
       "letter": "V",
-      "clue": "Place to store some barrels",
-      "type": "contains",
-      "answer": "winecave"
+      "clue": "Words, informally",
+      "type": "starts",
+      "answer": "vocab"
     },
     {
       "letter": "W",
-      "clue": "Renounce",
-      "type": "starts",
-      "answer": "waive"
+      "clue": "Meaning of 'vidi' in 'Veni, vidi, vici'",
+      "type": "contains",
+      "answer": "isaw"
     },
     {
       "letter": "X",
-      "clue": "It may fill up during a vacation",
+      "clue": "Reworked version of a song",
       "type": "contains",
-      "answer": "inbox"
+      "answer": "remix"
     },
     {
       "letter": "Y",
-      "clue": "One who might light altar candles in a religious ceremony",
-      "type": "contains",
-      "answer": "acolyte"
+      "clue": "Star Wars' sage",
+      "type": "starts",
+      "answer": "yoda"
     },
     {
       "letter": "Z",
-      "clue": "Dance-based fitness program",
+      "clue": "Fertilized egg",
       "type": "starts",
-      "answer": "zumba"
+      "answer": "zygote"
     }
   ],
   "revealMapping": {}
