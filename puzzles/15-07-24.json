@@ -1,0 +1,161 @@
+{
+  "clues": [
+    {
+      "letter": "A",
+      "clue": "Appoints as a minister",
+      "type": "contains",
+      "answer": "ordains"
+    },
+    {
+      "letter": "B",
+      "clue": "Annoying bedmate",
+      "type": "starts",
+      "answer": "blankethog"
+    },
+    {
+      "letter": "C",
+      "clue": "What might turn lay to layover?",
+      "type": "contains",
+      "answer": "autocomplete"
+    },
+    {
+      "letter": "D",
+      "clue": "Crab or lobster?",
+      "type": "starts",
+      "answer": "decapod"
+    },
+    {
+      "letter": "E",
+      "clue": "Greetings",
+      "type": "contains",
+      "answer": "hellos"
+    },
+    {
+      "letter": "F",
+      "clue": "Innocent sort",
+      "type": "contains",
+      "answer": "naif"
+    },
+    {
+      "letter": "G",
+      "clue": "Starting assumptions",
+      "type": "starts",
+      "answer": "givens"
+    },
+    {
+      "letter": "H",
+      "clue": "Whence dawn breaks",
+      "type": "contains",
+      "answer": "theeast"
+    },
+    {
+      "letter": "I",
+      "clue": "Septet in Dante's 'Purgatorio'",
+      "type": "contains",
+      "answer": "sins"
+    },
+    {
+      "letter": "J",
+      "clue": "Rapper ___-Z",
+      "type": "starts",
+      "answer": "jay"
+    },
+    {
+      "letter": "K",
+      "clue": "Accelerated, in a way",
+      "type": "contains",
+      "answer": "fasttracked"
+    },
+    {
+      "letter": "L",
+      "clue": "The Solomon's lily's smell of rotting fruit, to flies",
+      "type": "starts",
+      "answer": "lure"
+    },
+    {
+      "letter": "M",
+      "clue": "Actress Jovovich of 'The Fifth Element'",
+      "type": "starts",
+      "answer": "milla"
+    },
+    {
+      "letter": "N",
+      "clue": "Facts and figures, in brief",
+      "type": "contains",
+      "answer": "info"
+    },
+    {
+      "letter": "O",
+      "clue": "Where domestic meals are enjoyed",
+      "type": "contains",
+      "answer": "familydiningroom"
+    },
+    {
+      "letter": "P",
+      "clue": "Attack, as with snowballs",
+      "type": "starts",
+      "answer": "pelt"
+    },
+    {
+      "letter": "Q",
+      "clue": "Lawyer's title: Abbr",
+      "type": "contains",
+      "answer": "esq"
+    },
+    {
+      "letter": "R",
+      "clue": "Illuminated from behind",
+      "type": "starts",
+      "answer": "rearlit"
+    },
+    {
+      "letter": "S",
+      "clue": "Embroidered, e.g",
+      "type": "starts",
+      "answer": "sewn"
+    },
+    {
+      "letter": "T",
+      "clue": "Filling station?",
+      "type": "starts",
+      "answer": "tooth"
+    },
+    {
+      "letter": "U",
+      "clue": "Impolite sounds at the dinner table",
+      "type": "contains",
+      "answer": "slurps"
+    },
+    {
+      "letter": "V",
+      "clue": "Place to store some barrels",
+      "type": "contains",
+      "answer": "winecave"
+    },
+    {
+      "letter": "W",
+      "clue": "Renounce",
+      "type": "starts",
+      "answer": "waive"
+    },
+    {
+      "letter": "X",
+      "clue": "It may fill up during a vacation",
+      "type": "contains",
+      "answer": "inbox"
+    },
+    {
+      "letter": "Y",
+      "clue": "One who might light altar candles in a religious ceremony",
+      "type": "contains",
+      "answer": "acolyte"
+    },
+    {
+      "letter": "Z",
+      "clue": "Dance-based fitness program",
+      "type": "starts",
+      "answer": "zumba"
+    }
+  ],
+  "revealMapping": {}
+}

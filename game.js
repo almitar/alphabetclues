@@ -29,13 +29,13 @@ function updateSelectedButton(level) {
 function getMappingPercentage() {
     switch (difficultyLevel) {
         case 'easy':
-            return 90;
+            return 100;
         case 'medium':
-            return 60;
+            return 70;
         case 'advanced':
-            return 40;
+            return 50;
         default:
-            return 90;
+            return 100;
     }
 }
 

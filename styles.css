@@ -7,7 +7,7 @@ body {
     margin: 0 auto;
     padding-bottom: 40px;
     padding-top: 30px;
-    overflow: hidden;
+    max-width: 500px;
 }
 
 #game-container {
@@ -38,12 +38,12 @@ h1 {
 }
 .tile {
     border: 1px solid #000;
-    width: 25px;
-    height: 25px;
+    width: 28px;
+    height: 28px;
     text-align: center;
     line-height: 25px;
     margin-right: 5px;
-    font-size: 8px;
+    font-size: 1em;
     padding: 0;
     text-transform: uppercase; /* Ensure user inputs are capitalized */
 }
@@ -55,7 +55,7 @@ h1 {
 }
 .tile-index {
     position: absolute;
-    top: 12px;
+    top: 14px;
     right: 7px;
     font-size: 0.4em;
     color: #000;
