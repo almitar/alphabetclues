@@ -44,7 +44,8 @@ h1 {
     margin-right: 2px;
     font-size: 1em;
     padding: 0;
-    text-transform: uppercase; /* Ensure user inputs are capitalized */
+    text-transform: uppercase;
+    border-radius: 0;
 }
 .tile.incorrect {
     background-color: #ffcccc;
