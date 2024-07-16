@@ -159,23 +159,11 @@ function tryGenerateMappings() {
     const totalLetters = letterElements.length;
     const lettersToAssign = Math.floor(totalLetters * (percentage / 100));
 
-    // Ensure every answer has at least one letter mapped
     const selectedLetters = [];
     const letterGroups = {};
 
-    clues.forEach((clue, clueIndex) => {
-        const letterIndexes = clue.answer.split('').map((letter, letterIndex) => ({ clueIndex, letterIndex, letter }));
-        shuffleArray(letterIndexes);
-        selectedLetters.push(letterIndexes[0]); // Select one letter from each answer
-    });
-
-    // Randomly select remaining letters based on percentage
-    const remainingLetters = letterElements.filter(element => !selectedLetters.some(sel => sel.clueIndex === element.clueIndex && sel.letterIndex === element.letterIndex));
-    shuffleArray(remainingLetters);
-    selectedLetters.push(...remainingLetters.slice(0, Math.max(0, lettersToAssign - selectedLetters.length)));
-
     // Group selected letters by their character
-    selectedLetters.forEach(letterElement => {
+    letterElements.forEach(letterElement => {
         const letter = letterElement.letter;
         if (!letterGroups[letter]) {
             letterGroups[letter] = [];
@@ -184,27 +172,54 @@ function tryGenerateMappings() {
     });
 
     const usedNumbers = new Set(); // Set to keep track of used numbers
-    let currentNumber;
+    let currentNumber = 1;
 
-    // Attempt to assign data values to letter groups
+    // Assign data values to letter groups in order
     for (const letter in letterGroups) {
         const group = letterGroups[letter];
-        if (group.length > 1) {
-            shuffleArray(group); // Shuffle the group to randomize pairs or triples
-            for (let i = 0; i < group.length; i += 3) {
-                do {
-                    currentNumber = getRandomInt(1, 100); // Adjust the range here
-                } while (usedNumbers.has(currentNumber)); // Ensure the number hasn't been used
-                usedNumbers.add(currentNumber); // Add the number to the set of used numbers
+        const groupLength = group.length;
 
-                // Assign the current number to the group of up to three letters
-                group.slice(i, i + 3).forEach((item, index, arr) => {
-                    revealMapping[`${item.clueIndex}-${item.letterIndex}`] = {
-                        targetClueIndex: arr[(index + 1) % arr.length].clueIndex,
-                        targetLetterIndex: arr[(index + 1) % arr.length].letterIndex,
-                        index: currentNumber
-                    };
-                });
+        if (groupLength > 1) {
+            for (let i = 0; i < groupLength; i++) {
+                if (revealMapping[`${group[i].clueIndex}-${group[i].letterIndex}`]) continue; // Skip if already mapped
+                let mapped = false;
+
+                for (let j = i + 1; j < groupLength; j++) {
+                    if (!revealMapping[`${group[j].clueIndex}-${group[j].letterIndex}`]) {
+                        revealMapping[`${group[i].clueIndex}-${group[i].letterIndex}`] = {
+                            targetClueIndex: group[j].clueIndex,
+                            targetLetterIndex: group[j].letterIndex,
+                            index: currentNumber
+                        };
+                        revealMapping[`${group[j].clueIndex}-${group[j].letterIndex}`] = {
+                            targetClueIndex: group[i].clueIndex,
+                            targetLetterIndex: group[i].letterIndex,
+                            index: currentNumber
+                        };
+                        currentNumber++;
+                        mapped = true;
+                        break;
+                    }
+                }
+
+                if (!mapped) {
+                    for (let j = 0; j < i; j++) {
+                        if (!revealMapping[`${group[j].clueIndex}-${group[j].letterIndex}`]) {
+                            revealMapping[`${group[i].clueIndex}-${group[i].letterIndex}`] = {
+                                targetClueIndex: group[j].clueIndex,
+                                targetLetterIndex: group[j].letterIndex,
+                                index: currentNumber
+                            };
+                            revealMapping[`${group[j].clueIndex}-${group[j].letterIndex}`] = {
+                                targetClueIndex: group[i].clueIndex,
+                                targetLetterIndex: group[i].letterIndex,
+                                index: currentNumber
+                            };
+                            currentNumber++;
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -220,6 +235,8 @@ function tryGenerateMappings() {
 
     return allCluesMapped;
 }
+
+
 
 function handleFocus(clueIndex, tileIndex) {
     clearAllHighlights();

@@ -41,12 +41,18 @@ h1 {
     height: 28px;
     text-align: center;
     line-height: 25px;
-    margin-right: 2px;
+    margin-right: -1px; /* Use negative margin to collapse borders */
+    margin-bottom: -1px; /* Use negative margin to collapse borders */
     font-size: 1em;
     padding: 0;
     text-transform: uppercase;
     border-radius: 0;
 }
+
+.tile-wrapper {
+    display: inline-block;
+}
+
 .tile.incorrect {
     background-color: #ffcccc;
 }
