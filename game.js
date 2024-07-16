@@ -1,16 +1,64 @@
 let autocheck = false;
 let clues = [];
 let revealMapping = {};
-let difficultyLevel = 'medium';
+let difficultyLevel = 'easy';
+let startTime;
+let timerInterval;
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeGame();
 
-    document.getElementById('easy-level').addEventListener('click', () => setDifficultyLevel('easy'));
-    document.getElementById('medium-level').addEventListener('click', () => setDifficultyLevel('medium'));
-    document.getElementById('advanced-level').addEventListener('click', () => setDifficultyLevel('advanced'));
+    const easyButton = document.getElementById('easy-level');
+    const mediumButton = document.getElementById('medium-level');
+    const advancedButton = document.getElementById('advanced-level');
+    const backButton = document.getElementById('back-button');
+    const continueButton = document.getElementById('continue-button');
+    const completionOkButton = document.getElementById('completion-ok-button');
+
+    if (easyButton) easyButton.addEventListener('click', () => showLevelChangePopup('easy'));
+    if (mediumButton) mediumButton.addEventListener('click', () => showLevelChangePopup('medium'));
+    if (advancedButton) advancedButton.addEventListener('click', () => showLevelChangePopup('advanced'));
+    if (backButton) backButton.addEventListener('click', closeLevelChangePopup);
+    if (continueButton) continueButton.addEventListener('click', confirmLevelChange);
+    if (completionOkButton) completionOkButton.addEventListener('click', closeCompletionPopup);
 });
 
+function showLevelChangePopup(level) {
+    const levelChangeMessage = document.getElementById('level-change-message');
+    const levelChangeModal = document.getElementById('level-change-modal');
+    const continueButton = document.getElementById('continue-button');
+
+    if (!levelChangeMessage || !levelChangeModal || !continueButton) return;
+
+    let message = '';
+    if (difficultyLevel === 'easy' && level === 'advanced') {
+        message = 'Less letters are paired in Advanced mode.';
+    } else if (difficultyLevel === 'advanced' && level === 'easy') {
+        message = 'More letters are paired in Normal mode.';
+    }
+    levelChangeMessage.innerText = message;
+    levelChangeModal.style.display = 'block';
+    continueButton.dataset.level = level;
+}
+
+function closeLevelChangePopup() {
+    const levelChangeModal = document.getElementById('level-change-modal');
+    if (levelChangeModal) levelChangeModal.style.display = 'none';
+}
+
+function confirmLevelChange() {
+    const continueButton = document.getElementById('continue-button');
+    if (continueButton) {
+        const level = continueButton.dataset.level;
+        setDifficultyLevel(level);
+        closeLevelChangePopup();
+    }
+}
+
+function closeCompletionPopup() {
+    const completionModal = document.getElementById('completion-modal');
+    if (completionModal) completionModal.style.display = 'none';
+}
 
 function setDifficultyLevel(level) {
     difficultyLevel = level;
@@ -23,7 +71,8 @@ function updateSelectedButton(level) {
         button.classList.remove('selected');
     });
 
-    document.getElementById(`${level}-level`).classList.add('selected');
+    const selectedButton = document.getElementById(`${level}-level`);
+    if (selectedButton) selectedButton.classList.add('selected');
 }
 
 function getMappingPercentage() {
@@ -60,11 +109,26 @@ function initializeGame() {
             generateRevealMappings();
 
             setupGame();
+            startTimer(); // Start the timer when the game initializes
         })
         .catch(error => {
             console.error('Error loading puzzle:', error);
             alert('Puzzle not found for today. Please check back later.');
         });
+}
+
+function startTimer() {
+    startTime = new Date();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+    // Timer is running in the background, no need to update any UI element
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
 }
 
 function generateRevealMappings(attempt = 0, maxRetries = 10) {
@@ -122,26 +186,25 @@ function tryGenerateMappings() {
     const usedNumbers = new Set(); // Set to keep track of used numbers
     let currentNumber;
 
-    // Attempt to assign data values to letter pairs
+    // Attempt to assign data values to letter groups
     for (const letter in letterGroups) {
         const group = letterGroups[letter];
         if (group.length > 1) {
-            shuffleArray(group); // Shuffle the group to randomize pairs
-            for (let i = 0; i < group.length - 1; i += 2) {
+            shuffleArray(group); // Shuffle the group to randomize pairs or triples
+            for (let i = 0; i < group.length; i += 3) {
                 do {
                     currentNumber = getRandomInt(1, 100); // Adjust the range here
                 } while (usedNumbers.has(currentNumber)); // Ensure the number hasn't been used
                 usedNumbers.add(currentNumber); // Add the number to the set of used numbers
-                revealMapping[`${group[i].clueIndex}-${group[i].letterIndex}`] = {
-                    targetClueIndex: group[i + 1].clueIndex,
-                    targetLetterIndex: group[i + 1].letterIndex,
-                    index: currentNumber
-                };
-                revealMapping[`${group[i + 1].clueIndex}-${group[i + 1].letterIndex}`] = {
-                    targetClueIndex: group[i].clueIndex,
-                    targetLetterIndex: group[i].letterIndex,
-                    index: currentNumber
-                };
+
+                // Assign the current number to the group of up to three letters
+                group.slice(i, i + 3).forEach((item, index, arr) => {
+                    revealMapping[`${item.clueIndex}-${item.letterIndex}`] = {
+                        targetClueIndex: arr[(index + 1) % arr.length].clueIndex,
+                        targetLetterIndex: arr[(index + 1) % arr.length].letterIndex,
+                        index: currentNumber
+                    };
+                });
             }
         }
     }
@@ -170,40 +233,6 @@ function handleFocus(clueIndex, tileIndex) {
         const { targetClueIndex, targetLetterIndex } = revealMapping[mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
         targetTile.classList.add('highlight');
-    }
-}
-
-function handleInput(event, clueIndex, tileIndex, correctAnswer) {
-    console.log('handleInput called', clueIndex, tileIndex); // Debug log
-
-    const tile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
-
-   
-    const previousValue = tile.dataset.previousValue || ''; // Store the previous value
-    const userInput = event.target.value.trim().toUpperCase(); // Ensure input is capitalized
-
-    console.log('Previous Value:', previousValue, 'User Input:', userInput); // Debug log
-
-    if (previousValue && previousValue !== userInput) {
-        console.log('Previous value differs, clearing tile'); // Debug log
-        clearTile(tile, clueIndex, tileIndex); // Clear the tile if it has a previous value
-    }
-
-    tile.value = userInput; // Set the new input value
-
-    
-    if(tile.value.length == 2){
-        tile.value = tile.value.replace(previousValue, '');
-    }
-
-    tile.dataset.previousValue = tile.value; // Store the current value as previous for future checks
-
-    checkTile(clueIndex, tileIndex, correctAnswer, tile);
-
-    if (tile.value === '') {
-        clearTile(tile, clueIndex, tileIndex);
-    } else {
-        focusNextTile(clueIndex, tileIndex);
     }
 }
 
@@ -340,28 +369,67 @@ function focusNextTile(clueIndex, tileIndex) {
     }
 
     // If all tiles in the current word are filled or correct, move to the next clue
-    moveToNextClue(clueIndex);
+    moveToNextClue(clueIndex, tileIndex);
 }
 
 function moveToNextClue(clueIndex) {
     let nextClueIndex = clueIndex + 1;
-    if (nextClueIndex >= clues.length) {
-        nextClueIndex = 0; // Wrap around to the first clue if we're at the last one
-    }
 
-    const nextClueLength = clues[nextClueIndex].answer.length;
-
-    // Find the first focusable tile in the next clue
-    for (let i = 0; i < nextClueLength; i++) {
-        const nextTile = document.getElementById(`answer-${nextClueIndex}-${i}`);
-        if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
-            nextTile.focus();
-            return;
+    // Continue searching in the next clues if current clue is completely filled or correct
+    while (nextClueIndex !== clueIndex) {
+        if (nextClueIndex >= clues.length) {
+            nextClueIndex = 0; // Wrap around to the first clue if we're at the last one
         }
+
+        const nextClueLength = clues[nextClueIndex].answer.length;
+
+        // Find the first focusable tile in the next clue
+        for (let i = 0; i < nextClueLength; i++) {
+            const nextTile = document.getElementById(`answer-${nextClueIndex}-${i}`);
+            if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
+                nextTile.focus();
+                return;
+            }
+        }
+
+        nextClueIndex++;
     }
 }
 
+function handleInput(event, clueIndex, tileIndex, correctAnswer) {
+    console.log('handleInput called', clueIndex, tileIndex); // Debug log
 
+    const tile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+
+    const previousValue = tile.dataset.previousValue || ''; // Store the previous value
+    const userInput = event.target.value.trim().toUpperCase(); // Ensure input is capitalized
+
+    console.log('Previous Value:', previousValue, 'User Input:', userInput); // Debug log
+
+    if (previousValue && previousValue !== userInput) {
+        console.log('Previous value differs, clearing tile'); // Debug log
+        clearTile(tile, clueIndex, tileIndex); // Clear the tile if it has a previous value
+    }
+
+    tile.value = userInput; // Set the new input value
+
+    if (tile.value.length == 2) {
+        tile.value = tile.value.replace(previousValue, '');
+    }
+
+    tile.dataset.previousValue = tile.value; // Store the current value as previous for future checks
+
+    checkTile(clueIndex, tileIndex, correctAnswer, tile);
+
+    if (tile.value === '') {
+        clearTile(tile, clueIndex, tileIndex);
+    } else {
+        focusNextTile(clueIndex, tileIndex);
+    }
+
+    // Check if the game is completed
+    checkGameCompletion();
+}
 
 function handleBackspaceNoAutoCheck(clueIndex, tileIndex) {
     const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
@@ -565,6 +633,7 @@ function setupGame() {
             tile.id = `answer-${index}-${i}`;
             tile.dataset.clueIndex = index;
             tile.dataset.tileIndex = i;
+            tile.autocomplete = 'off'; // Disable keyboard autofill
             tile.onfocus = () => handleFocus(index, i); // Attach handleFocus event
             tile.oninput = (event) => {
                 console.log(`Input event fired: clueIndex=${index}, tileIndex=${i}`);
@@ -617,4 +686,40 @@ function setupGame() {
     });
 
     clearAllHighlights();
+}
+
+function checkGameCompletion() {
+    let allCorrect = true;
+    let allFilled = true;
+
+    clues.forEach((clue, clueIndex) => {
+        for (let i = 0; i < clue.answer.length; i++) {
+            const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+            if (!tile) continue;
+            const userInput = tile.value.trim().toLowerCase();
+            if (userInput === '') {
+                allFilled = false;
+            }
+            if (userInput !== clue.answer[i].toLowerCase()) {
+                allCorrect = false;
+            }
+        }
+    });
+
+    if (allFilled) {
+        const completionModal = document.getElementById('completion-modal');
+        const completionMessage = document.getElementById('completion-message');
+        if (completionModal && completionMessage) {
+            const elapsedTime = new Date(new Date() - startTime);
+            const minutes = String(elapsedTime.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(elapsedTime.getUTCSeconds()).padStart(2, '0');
+            if (allCorrect) {
+                stopTimer();
+                completionMessage.innerText = `Congratulations! You've solved today's puzzle in ${minutes}:${seconds}`;
+            } else {
+                completionMessage.innerText = 'Keep trying! Some of your answers are incorrect.';
+            }
+            completionModal.style.display = 'block';
+        }
+    }
 }

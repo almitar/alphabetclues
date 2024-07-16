@@ -1,0 +1,162 @@
+{
+    "clues": [
+      {
+        "letter": "A",
+        "clue": "Information on a boarding pass or stadium ticket",
+        "type": "contains",
+        "answer": "gate"
+      },
+      {
+        "letter": "B",
+        "clue": "Source of misery",
+        "type": "starts",
+        "answer": "bane"
+      },
+      {
+        "letter": "C",
+        "clue": "And more, in brief",
+        "type": "contains",
+        "answer": "etc"
+      },
+      {
+        "letter": "D",
+        "clue": "Dieter's salad request",
+        "type": "contains",
+        "answer": "nodressing"
+      },
+      {
+        "letter": "E",
+        "clue": "Greeting that saves postage",
+        "type": "starts",
+        "answer": "ecard"
+      },
+      {
+        "letter": "F",
+        "clue": "What's it all about, ___?",
+        "type": "contains",
+        "answer": "alfie"
+      },
+      {
+        "letter": "G",
+        "clue": "Chicken drumstick",
+        "type": "contains",
+        "answer": "leg"
+      },
+      {
+        "letter": "H",
+        "clue": "Fruit-flavored ice drinks",
+        "type": "contains",
+        "answer": "slushies"
+      },
+      {
+        "letter": "I",
+        "clue": "Declaration while sweating",
+        "type": "starts",
+        "answer": "imhot"
+      },
+      {
+        "letter": "J",
+        "clue": "This is ridiculous!",
+        "type": "contains",
+        "answer": "whatajoke"
+      },
+      {
+        "letter": "K",
+        "clue": "KO",
+        "type": "starts",
+        "answer": "knockout"
+      },
+      {
+        "letter": "L",
+        "clue": "Apportion",
+        "type": "contains",
+        "answer": "allot"
+      },
+      {
+        "letter": "M",
+        "clue": "Papa's partner",
+        "type": "starts",
+        "answer": "mama"
+      },
+      {
+        "letter": "N",
+        "clue": "___'acte",
+        "type": "contains",
+        "answer": "entr"
+      },
+      {
+        "letter": "O",
+        "clue": "Creature playing by a stream",
+        "type": "starts",
+        "answer": "otter"
+      },
+      {
+        "letter": "P",
+        "clue": "Famous single-named soccer player",
+        "type": "starts",
+        "answer": "pele"
+      },
+      {
+        "letter": "Q",
+        "clue": "Robin Hood's carrying case",
+        "type": "starts",
+        "answer": "quiver"
+      },
+      {
+        "letter": "R",
+        "clue": "Genetic material involved in protein synthesis",
+        "type": "starts",
+        "answer": "rna"
+      },
+      {
+        "letter": "S",
+        "clue": "Took to the slopes",
+        "type": "starts",
+        "answer": "skied"
+      },
+      {
+        "letter": "T",
+        "clue": "Best of the best, sportswise",
+        "type": "contains",
+        "answer": "allstars"
+      },
+      {
+        "letter": "U",
+        "clue": "Praise",
+        "type": "contains",
+        "answer": "laud"
+      },
+      {
+        "letter": "V",
+        "clue": "By way of",
+        "type": "starts",
+        "answer": "via"
+      },
+      {
+        "letter": "W",
+        "clue": "One of two figures in 'The Wizard of Oz'",
+        "type": "starts",
+        "answer": "wickedwitch"
+      },
+      {
+        "letter": "X",
+        "clue": "Maker of the Submariner and Daytona watches",
+        "type": "contains",
+        "answer": "rolex"
+      },
+      {
+        "letter": "Y",
+        "clue": "McCartney/Jackson duet hit",
+        "type": "contains",
+        "answer": "saysaysay"
+      },
+      {
+        "letter": "Z",
+        "clue": "Number at a bridal boutique",
+        "type": "contains",
+        "answer": "dresssize"
+      }
+    ],
+    "revealMapping": {}
+  }
+  
