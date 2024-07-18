@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Word Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>ALPHABET CLUES</h1>
+        <p>Find the hidden words for each letter of the alphabet. Tiles that highlight at the same time mean they contain the same letter.</p>
+        <div id="game-controls">
+            <div class="level-buttons">
+                <button id="easy-level" class="selected">Normal</button>
+                <button id="medium-level" style="display: none;">Medium</button>
+                <button id="advanced-level">Advanced</button>
+            </div>
+            <div class="date-controls">
+                <label for="puzzle-date">Select Puzzle Date:</label>
+                <input type="date" id="puzzle-date" value="">
+                <button id="generate-puzzle">Generate Puzzle</button>
+            </div>
+            <div class="toggle-container">
+                <span id="toggle-text">Auto Check</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autocheck-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div id="clue-section-container"></div>
+    </div>
+
+    <!-- Modals -->
+    <div id="level-change-modal" class="modal">
+        <div class="modal-content">
+            <p id="level-change-message"></p>
+            <button id="back-button">Back</button>
+            <button id="continue-button">Continue</button>
+        </div>
+    </div>
+
+    <div id="completion-modal" class="modal">
+        <div class="modal-content">
+            <p id="completion-message"></p>
+            <button id="completion-ok-button">OK</button>
+        </div>
+    </div>
+
+    <script src="generator.js"></script>
+</body>
+</html>

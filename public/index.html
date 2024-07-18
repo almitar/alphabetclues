@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Alphabet Clues</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>ALPHABET CLUES</h1>
+        <p>Find the hidden words for each letter of the alphabet. Tiles that highlight at the same time mean they contain the same letter.</p>
+        <div id="game-controls">
+            <div class="level-buttons">
+                <button id="easy-level" class="selected">Normal</button>
+                <button id="medium-level" style="display: none;">Medium</button>
+                <button id="advanced-level">Advanced</button>
+            </div>
+            <div class="toggle-container">
+                <span id="toggle-text">Auto Check</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autocheck-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div id="puzzle-container">
+            <!-- The daily puzzle will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="level-change-modal" class="modal">
+        <div class="modal-content">
+            <p id="level-change-message"></p>
+            <button id="back-button">Back</button>
+            <button id="continue-button">Continue</button>
+        </div>
+    </div>
+
+    <div id="completion-modal" class="modal">
+        <div class="modal-content">
+            <p id="completion-message"></p>
+            <button id="completion-ok-button">OK</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentDate = new Date();
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const year = String(currentDate.getFullYear()).slice(-2);
+            const puzzleHtmlFileName = `puzzles/${day}-${month}-${year}.html`;
+            const puzzleJsonFileName = `puzzles/${day}-${month}-${year}.json`;
+
+            Promise.all([
+                fetch(puzzleHtmlFileName).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Puzzle not found for today.');
+                    }
+                    return response.text();
+                }),
+                fetch(puzzleJsonFileName).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Puzzle data not found for today.');
+                    }
+                    return response.json();
+                })
+            ])
+            .then(([html, jsonData]) => {
+                document.getElementById('puzzle-container').innerHTML = html;
+                window.puzzleData = jsonData; // Store the JSON data globally
+                initializeGameAfterLoading();
+            })
+            .catch(error => {
+                console.error('Error loading puzzle:', error);
+                document.getElementById('puzzle-container').innerText = 'Puzzle not found for today. Please check back later.';
+            });
+        });
+
+        function initializeGameAfterLoading() {
+            initializeEventListeners();
+            reinitializePuzzle();
+        }
+    </script>
+    <script src="generator.js"></script>
+</body>
+</html>
