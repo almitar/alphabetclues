@@ -5,16 +5,16 @@ let difficultyLevel = 'easy';
 let startTime;
 let timerInterval;
 
-document.addEventListener('DOMContentLoaded', initializeEventListeners);
+document.addEventListener('DOMContentLoaded', () => {
+    initializeGame();
 
-function initializeEventListeners() {
     const easyButton = document.getElementById('easy-level');
     const mediumButton = document.getElementById('medium-level');
     const advancedButton = document.getElementById('advanced-level');
     const backButton = document.getElementById('back-button');
     const continueButton = document.getElementById('continue-button');
     const completionOkButton = document.getElementById('completion-ok-button');
-    const autocheckToggle = document.getElementById('autocheck-toggle');
+    const generateButton = document.getElementById('generate-puzzle');
 
     if (easyButton) easyButton.addEventListener('click', () => showLevelChangePopup('easy'));
     if (mediumButton) mediumButton.addEventListener('click', () => showLevelChangePopup('medium'));
@@ -22,52 +22,9 @@ function initializeEventListeners() {
     if (backButton) backButton.addEventListener('click', closeLevelChangePopup);
     if (continueButton) continueButton.addEventListener('click', confirmLevelChange);
     if (completionOkButton) completionOkButton.addEventListener('click', closeCompletionPopup);
-    if (autocheckToggle) autocheckToggle.addEventListener('change', () => {
-        autocheck = autocheckToggle.checked;
-        document.querySelectorAll('.tile').forEach(tile => {
-            if (autocheck) {
-                tile.classList.remove('autocheckoff');
-            } else {
-                tile.classList.add('autocheckoff');
-                tile.disabled = false;
-                tile.classList.remove('incorrect');
-            }
-        });
-        if (autocheck) {
-            clearAllHighlights(); // Clear highlights before checking tiles
-            checkAllTiles();
-        }
-    });
+    if (generateButton) generateButton.addEventListener('click', generatePuzzle);
+});
 
-    // Reinitialize puzzle functionalities if the puzzle is already loaded
-    if (document.getElementById('puzzle-container').innerHTML.trim()) {
-        reinitializePuzzle();
-    }
-}
-
-function reinitializePuzzle() {
-    // Use the globally stored JSON data to set up the puzzle
-    if (window.puzzleData) {
-        clues = window.puzzleData.clues;
-        generateRevealMappings();
-    }
-
-    // Attach event listeners and initialize functionalities for dynamically loaded puzzle
-    const tiles = document.querySelectorAll('.tile');
-    tiles.forEach(tile => {
-        const clueIndex = tile.dataset.clueIndex;
-        const tileIndex = tile.dataset.tileIndex;
-        tile.onfocus = () => handleFocus(clueIndex, tileIndex);
-        tile.oninput = (event) => handleInput(event, clueIndex, tileIndex, clues[clueIndex].answer);
-        tile.onkeydown = (event) => handleKeydown(event, clueIndex, tileIndex);
-        tile.onblur = () => handleBlur(clueIndex, tileIndex);
-    });
-
-    // Reattach other necessary functionalities like checking tiles and setting up the game state
-    setupGame();
-}
-
-// Existing functions...
 function showLevelChangePopup(level) {
     const levelChangeMessage = document.getElementById('level-change-message');
     const levelChangeModal = document.getElementById('level-change-modal');
@@ -135,10 +92,8 @@ function getMappingPercentage() {
 
 function initializeGame() {
     const currentDate = new Date();
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const year = String(currentDate.getFullYear()).slice(-2);
-    const puzzleFileName = `puzzles/${day}-${month}-${year}.json`;
+    const puzzleNumber = dateToPuzzleNumber(currentDate);
+    const puzzleFileName = `puzzles/json/${puzzleNumber}.json`;
 
     fetch(puzzleFileName)
         .then(response => {
@@ -760,4 +715,39 @@ function setupGame() {
     });
 
     clearAllHighlights();
+}
+
+function dateToPuzzleNumber(date) {
+    const startDate = new Date(2024, 6, 18); // July 18, 2024
+    const diffTime = Math.abs(date - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return 100 + diffDays;
+}
+
+function generatePuzzle() {
+    const dateInput = document.getElementById('puzzle-date');
+    const selectedDate = new Date(dateInput.value);
+    const puzzleNumber = dateToPuzzleNumber(selectedDate);
+    const puzzleFileName = `puzzles/json/${puzzleNumber}.json`;
+
+    fetch(puzzleFileName)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            clues = data.clues;
+
+            // Generate reveal mappings
+            generateRevealMappings();
+
+            setupGame();
+            startTimer(); // Start the timer when the game initializes
+        })
+        .catch(error => {
+            console.error('Error loading puzzle:', error);
+            alert('Puzzle not found for the selected date. Please check back later.');
+        });
 }
