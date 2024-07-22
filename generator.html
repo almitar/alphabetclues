@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Word Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>ALPHABET CLUES</h1>
+        <p>Find the hidden words for each letter of the alphabet. Tiles that highlight at the same time mean they contain the same letter.</p>
+        <div id="game-controls">
+            <div class="date-controls">
+                <label for="puzzle-date">Select Puzzle Date:</label>
+                <input type="date" id="puzzle-date" value="">
+                <button id="generate-puzzle">Generate Puzzle</button>
+                <button id="copy-html">Copy HTML</button>
+            </div>
+        </div>
+        <div id="puzzle-container"></div>
+    </div>
+
+    <script src="generator.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+body {
+    font-family: 'Helvetica Neue';
+    line-height: 20px;
+    text-align: center;
+    margin-top: 50px;
+    background-color: whitesmoke;
+    margin: 0 auto;
+    padding: 30px 16px 40px 16px; /* padding: top right bottom left */
+    max-width: 500px;
+}
+
+#game-container {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+h1 {
+    font-size: 24px; /* Smaller font size for the h1 */
+}
+.clue-section {
+    margin-bottom: 30px;
+}
+.clue {
+    margin-bottom: 10px;
+}
+.clue-type {
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.tile-container {
+    display: flex;
+    margin-bottom: 10px;
+}
+.tile-wrapper {
+    position: relative;
+}
+.tile {
+    border: 1px solid #000;
+    width: 28px;
+    height: 28px;
+    text-align: center;
+    line-height: 25px;
+    margin-right: -1px; /* Use negative margin to collapse borders */
+    margin-bottom: -1px; /* Use negative margin to collapse borders */
+    font-size: 1em;
+    padding: 0;
+    text-transform: uppercase;
+    border-radius: 0;
+}
+
+.tile-wrapper {
+    display: inline-block;
+}
+
+.tile.incorrect {
+    background-color: #ffcccc;
+}
+.tile.revealed {
+    background-color: #e0f7fa; /* Light blue background for revealed tiles */
+}
+.tile-index {
+    position: absolute;
+    top: 14px;
+    right: 4px;
+    font-size: 0.4em;
+    color: #000;
+}
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    margin-left: 10px;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 20px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.tile.highlight {
+    background-color: yellow;
+}
+
+.level-buttons {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 20px;
+}
+.level-buttons button {
+    border: none;
+    background: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 0 20px 0 0px;
+    padding: 0;
+    color: #8d8c8c;
+    transition: color 0.3s, font-weight 0.3s;
+    font-size: 14px;
+}
+.level-buttons button:hover {
+    color: #000;
+}
+.level-buttons button.selected {
+    color: #000; /* Highlight selected button */
+    font-weight: bold;
+}
+
+#game-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#toggle-text {
+    font-size: 14px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+}
+
+button {
+    margin: 10px;
+    padding: 10px;
+}
