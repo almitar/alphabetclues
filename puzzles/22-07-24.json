@@ -2,160 +2,162 @@
   "clues": [
     {
       "letter": "A",
-      "clue": "Puts on TV",
+      "clue": "Flight-related prefix",
       "type": "starts",
-      "answer": "airs"
+      "answer": "aero"
     },
     {
       "letter": "B",
-      "clue": "Holder of sale goods",
+      "clue": "Sheriff's star",
       "type": "starts",
-      "answer": "bin"
+      "answer": "badge"
     },
     {
       "letter": "C",
-      "clue": "Incessant talker",
-      "type": "starts",
-      "answer": "chatterbox"
+      "clue": "Front tooth",
+      "type": "contains",
+      "answer": "incisor"
     },
     {
       "letter": "D",
-      "clue": "Norse war god",
-      "type": "contains",
-      "answer": "odin"
+      "clue": "Please stay!",
+      "type": "starts",
+      "answer": "dontgo"
     },
     {
       "letter": "E",
-      "clue": "Move, to a real estate agent",
-      "type": "contains",
-      "answer": "relo"
+      "clue": "Biblical garden",
+      "type": "starts",
+      "answer": "eden"
     },
     {
       "letter": "F",
-      "clue": "The Sopranos' subject",
-      "type": "contains",
-      "answer": "mafia"
+      "clue": "Meal eaten with long-handled forks",
+      "type": "starts",
+      "answer": "fondue"
     },
     {
       "letter": "G",
-      "clue": "Relaxes enforcement",
+      "clue": "Former part of Portuguese India",
       "type": "starts",
-      "answer": "goessoft"
+      "answer": "goa"
     },
     {
       "letter": "H",
-      "clue": "Mass destruction",
+      "clue": "Insinuate",
       "type": "starts",
-      "answer": "havoc"
+      "answer": "hintat"
     },
     {
       "letter": "I",
-      "clue": "Be a passenger",
-      "type": "contains",
-      "answer": "ride"
+      "clue": "___ Never Meet Again' (Elvis song)",
+      "type": "starts",
+      "answer": "ifwe"
     },
     {
       "letter": "J",
-      "clue": "Alternative to Newark or La Guardia",
-      "type": "starts",
-      "answer": "jfk"
+      "clue": "Bedwear, informally",
+      "type": "contains",
+      "answer": "pjs"
     },
     {
       "letter": "K",
-      "clue": "Hop, ___ and a jump",
+      "clue": "Zap in the microwave",
       "type": "contains",
-      "answer": "skip"
+      "answer": "nuke"
     },
     {
       "letter": "L",
-      "clue": "Gift upon arriving in Honolulu",
+      "clue": "Sierra ___",
       "type": "starts",
-      "answer": "lei"
+      "answer": "leone"
     },
     {
       "letter": "M",
-      "clue": "Chow ___",
+      "clue": "Sheds",
       "type": "starts",
-      "answer": "mein"
+      "answer": "molts"
     },
     {
       "letter": "N",
-      "clue": "Calm down ... stop crying",
-      "type": "starts",
-      "answer": "nomoretears"
+      "clue": "Includes",
+      "type": "contains",
+      "answer": "contains"
     },
     {
       "letter": "O",
-      "clue": "___ law (electricity principle)",
-      "type": "starts",
-      "answer": "ohms"
+      "clue": "Prefix for postale in a commercial context",
+      "type": "contains",
+      "answer": "aero"
     },
     {
       "letter": "P",
-      "clue": "In pieces",
+      "clue": "Stumble",
       "type": "contains",
-      "answer": "apart"
+      "answer": "slip"
     },
     {
       "letter": "Q",
-      "clue": "Ruler of a buzzing kingdom",
-      "type": "starts",
-      "answer": "queenbee"
+      "clue": "Outdoor meals with hamburgers or hot dogs",
+      "type": "contains",
+      "answer": "bbqs"
     },
     {
       "letter": "R",
-      "clue": "Gay Nineties, e.g",
-      "type": "contains",
-      "answer": "era"
+      "clue": "Peloton stat.",
+      "type": "starts",
+      "answer": "rpm"
     },
     {
       "letter": "S",
-      "clue": "Asparagus units",
-      "type": "starts",
-      "answer": "spears"
+      "clue": "More, in Seville",
+      "type": "contains",
+      "answer": "mas"
     },
     {
       "letter": "T",
-      "clue": "Duck or one of its colors",
-      "type": "starts",
-      "answer": "teal"
+      "clue": "Door lock",
+      "type": "contains",
+      "answer": "latch"
     },
     {
       "letter": "U",
-      "clue": "Spoil",
+      "clue": "Family name of Henry VIII",
       "type": "contains",
-      "answer": "turn"
+      "answer": "tudor"
     },
     {
       "letter": "V",
-      "clue": "Words, informally",
-      "type": "starts",
-      "answer": "vocab"
+      "clue": "Wash",
+      "type": "contains",
+      "answer": "lave"
     },
     {
       "letter": "W",
-      "clue": "Meaning of 'vidi' in 'Veni, vidi, vici'",
-      "type": "contains",
-      "answer": "isaw"
+      "clue": "Money rolls",
+      "type": "starts",
+      "answer": "wads"
     },
     {
       "letter": "X",
-      "clue": "Reworked version of a song",
+      "clue": "Mountain goat",
       "type": "contains",
-      "answer": "remix"
+      "answer": "ibex"
     },
     {
       "letter": "Y",
-      "clue": "Star Wars' sage",
-      "type": "starts",
-      "answer": "yoda"
+      "clue": "Wrecking Ball' singer Cyrus",
+      "type": "contains",
+      "answer": "miley"
     },
     {
       "letter": "Z",
-      "clue": "Fertilized egg",
+      "clue": "Area",
       "type": "starts",
-      "answer": "zygote"
+      "answer": "zone"
     }
   ],
   "revealMapping": {}
 }
+
+
