@@ -61,11 +61,16 @@ h1 {
 }
 .tile-index {
     position: absolute;
-    top: 14px;
-    right: 4px;
-    font-size: 0.4em;
-    color: #000;
+    top: 22px;
+    right: 2px;
+    width: 5px;
+    height: 5px;
+    background-color: rgb(0, 0, 0);
+    border-radius: 50%;
+    font-size: xx-small;
+    color: transparent;
 }
+
 .toggle-container {
     display: flex;
     align-items: center;

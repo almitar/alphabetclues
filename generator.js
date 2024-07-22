@@ -136,7 +136,6 @@ function generatePuzzleHtml(puzzleDate) {
             if (revealMappings[difficultyLevel][mappingKey]) {
                 const indexLabel = document.createElement('span');
                 indexLabel.className = 'tile-index';
-                indexLabel.innerText = revealMappings[difficultyLevel][mappingKey].index;
                 tileWrapper.appendChild(indexLabel);
                 tile.classList.add('index-' + revealMappings[difficultyLevel][mappingKey].index);
                 tile.dataset.index = revealMappings[difficultyLevel][mappingKey].index;
@@ -184,6 +183,7 @@ function generatePuzzleHtml(puzzleDate) {
     container.innerHTML = htmlContent;
     saveGameState();
 }
+
 
 function copyGeneratedHtml() {
     const container = document.getElementById('puzzle-container');
