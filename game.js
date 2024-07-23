@@ -10,7 +10,6 @@ let startTime;
 let timerInterval;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded and parsed.");
     loadPuzzle().then(() => {
         initializeEventListeners();
         loadGameState();
@@ -24,7 +23,6 @@ async function loadPuzzle() {
     const year = String(currentDate.getFullYear()).slice(-2);
     const puzzleHtmlFileName = `puzzles/${year}-${month}-${day}.html`;
 
-    console.log(`Loading puzzle from file: ${puzzleHtmlFileName}`);
 
     try {
         const response = await fetch(puzzleHtmlFileName);
@@ -32,7 +30,6 @@ async function loadPuzzle() {
             throw new Error('Puzzle not found for today.');
         }
         const html = await response.text();
-        console.log("Puzzle loaded successfully.");
         const puzzleContainer = document.getElementById('puzzle-container');
         puzzleContainer.innerHTML = html;
 
@@ -57,16 +54,13 @@ async function loadPuzzle() {
             }
         });
 
-        console.log("Puzzle data found:", window.puzzleData);
         initializeGameAfterLoading();
     } catch (error) {
-        console.error('Error loading puzzle:', error);
         document.getElementById('puzzle-container').innerText = 'Puzzle not found for today. Please check back later.';
     }
 }
 
 function initializeEventListeners() {
-    console.log("Initializing event listeners.");
     const easyButton = document.getElementById('easy-level');
     const mediumButton = document.getElementById('medium-level');
     const advancedButton = document.getElementById('advanced-level');
@@ -83,7 +77,6 @@ function initializeEventListeners() {
     if (completionOkButton) completionOkButton.addEventListener('click', closeCompletionPopup);
     if (autocheckToggle) autocheckToggle.addEventListener('change', () => {
         autocheck = autocheckToggle.checked;
-        console.log(`Autocheck toggled: ${autocheck}`);
         document.querySelectorAll('.tile').forEach(tile => {
             if (autocheck) {
                 tile.classList.remove('autocheckoff');
@@ -101,7 +94,6 @@ function initializeEventListeners() {
 }
 
 function initializeGameAfterLoading() {
-    console.log("Initializing game after loading puzzle data.");
     const puzzleData = window.puzzleData;
     if (!puzzleData) {
         throw new Error('Puzzle data not found in the HTML.');
@@ -115,9 +107,6 @@ function initializeGameAfterLoading() {
 }
 
 function setupGame() {
-    console.log('Setting up game.');
-    console.log('Reveal Mappings Structure:', JSON.stringify(revealMappings, null, 2));
-    console.log('Difficulty Level:', difficultyLevel);
 
     const container = document.getElementById('puzzle-container');
     container.innerHTML = '';
@@ -181,11 +170,9 @@ function setupGame() {
 }
 
 function reinitializePuzzle() {
-    console.log("Reinitializing puzzle.");
     if (window.puzzleData) {
         clues = window.puzzleData.clues;
         revealMappings = window.revealMappings || revealMappings;
-        console.log('Loaded puzzle data:', window.puzzleData);
     }
 
     initializeControls();
@@ -193,7 +180,6 @@ function reinitializePuzzle() {
 }
 
 function initializeControls() {
-    console.log("Initializing controls for tiles.");
     const tiles = document.querySelectorAll('.tile');
     tiles.forEach(tile => {
         const clueIndex = tile.dataset.clueIndex;
@@ -209,7 +195,6 @@ function startTimer() {
     startTime = new Date();
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(updateTimer, 1000);
-    console.log("Timer started.");
 }
 
 function saveGameState() {
@@ -232,13 +217,11 @@ function saveGameState() {
     });
 
     localStorage.setItem(`gameState-${new Date().toISOString().split('T')[0]}`, JSON.stringify(gameState));
-    console.log('Game state saved:', gameState);
 }
 
 function loadGameState() {
     const savedGameState = localStorage.getItem(`gameState-${new Date().toISOString().split('T')[0]}`);
     if (!savedGameState) {
-        console.log('No saved game state for today.');
         return;
     }
 
@@ -258,11 +241,9 @@ function loadGameState() {
     });
 
     updateSelectedButton(difficultyLevel);
-    console.log('Game state loaded:', gameState);
 }
 
 function showLevelChangePopup(level) {
-    console.log(`Show level change popup for level: ${level}`);
     const levelChangeMessage = document.getElementById('level-change-message');
     const levelChangeModal = document.getElementById('level-change-modal');
     const continueButton = document.getElementById('continue-button');
@@ -281,7 +262,6 @@ function showLevelChangePopup(level) {
 }
 
 function closeLevelChangePopup() {
-    console.log("Closing level change popup.");
     const levelChangeModal = document.getElementById('level-change-modal');
     if (levelChangeModal) levelChangeModal.style.display = 'none';
 }
@@ -290,20 +270,17 @@ function confirmLevelChange() {
     const continueButton = document.getElementById('continue-button');
     if (continueButton) {
         const level = continueButton.dataset.level;
-        console.log(`Confirming level change to: ${level}`);
         setDifficultyLevel(level);
         closeLevelChangePopup();
     }
 }
 
 function closeCompletionPopup() {
-    console.log("Closing completion popup.");
     const completionModal = document.getElementById('completion-modal');
     if (completionModal) completionModal.style.display = 'none';
 }
 
 function setDifficultyLevel(level) {
-    console.log(`Setting difficulty level to: ${level}`);
     difficultyLevel = level;
     updateSelectedButton(level);
     setupGame();
@@ -317,11 +294,9 @@ function updateSelectedButton(level) {
 
     const selectedButton = document.getElementById(`${level}-level`);
     if (selectedButton) selectedButton.classList.add('selected');
-    console.log(`Updated selected button to: ${level}`);
 }
 
 function handleFocus(clueIndex, tileIndex) {
-    console.log(`Handling focus on tile: clueIndex=${clueIndex}, tileIndex=${tileIndex}`);
     clearAllHighlights();
 
     const mappingKey = `${clueIndex}-${tileIndex}`;
@@ -337,7 +312,6 @@ function handleFocus(clueIndex, tileIndex) {
 }
 
 function clearTile(tile, clueIndex, tileIndex) {
-    console.log(`Clearing tile: clueIndex=${clueIndex}, tileIndex=${tileIndex}`);
     tile.value = '';
     tile.dataset.revealed = 'false';
     tile.classList.remove('incorrect');
@@ -359,8 +333,6 @@ function clearTile(tile, clueIndex, tileIndex) {
 function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
     const userInput = tile.value.trim();
     const isCorrect = userInput.toLowerCase() === correctAnswer[tileIndex].toLowerCase();
-
-    console.log(`Checking tile: clueIndex=${clueIndex}, tileIndex=${tileIndex}, userInput=${userInput}, isCorrect=${isCorrect}`);
 
     if (userInput === '') {
         tile.classList.remove('incorrect');
@@ -386,8 +358,6 @@ function propagateLetter(clueIndex, tileIndex, value, isCorrect) {
         targetTile.value = value.toUpperCase();
         targetTile.dataset.revealed = 'true';
 
-        console.log(`Propagating letter: clueIndex=${clueIndex}, tileIndex=${tileIndex}, targetClueIndex=${targetClueIndex}, targetLetterIndex=${targetLetterIndex}, value=${value}`);
-
         if (autocheck) {
             if (isCorrect) {
                 targetTile.disabled = true;
@@ -401,7 +371,6 @@ function propagateLetter(clueIndex, tileIndex, value, isCorrect) {
 
 function handleKeydown(event, clueIndex, tileIndex) {
     const tile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
-    console.log(`Handling keydown: clueIndex=${clueIndex}, tileIndex=${tileIndex}, key=${event.key}`);
 
     if (event.key === 'Backspace') {
         event.preventDefault();
@@ -651,7 +620,6 @@ function moveRight(clueIndex, tileIndex) {
 }
 
 function deletePropagatedLetter(clueIndex, tileIndex) {
-    console.log(`Deleting propagated letter: clueIndex=${clueIndex}, tileIndex=${tileIndex}`);
     const mappingKey = `${clueIndex}-${tileIndex}`;
     if (revealMappings[difficultyLevel][mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
@@ -671,7 +639,6 @@ function getTileIndex(tile) {
 }
 
 function checkAllTiles() {
-    console.log("Checking all tiles.");
     clearAllHighlights();
     clues.forEach((clue, index) => {
         for (let i = 0; i < clue.answer.length; i++) {
@@ -684,14 +651,12 @@ function checkAllTiles() {
 }
 
 function clearAllHighlights() {
-    console.log("Clearing all highlights.");
     document.querySelectorAll('.tile').forEach(tile => {
         tile.classList.remove('highlight');
     });
 }
 
 function handleBlur(clueIndex, tileIndex) {
-    console.log(`Handling blur: clueIndex=${clueIndex}, tileIndex=${tileIndex}`);
     const mappingKey = `${clueIndex}-${tileIndex}`;
     const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
     currentTile.classList.remove('highlight');
@@ -728,11 +693,9 @@ function checkGameCompletion() {
                 completionMessage.innerText = 'Congratulations! You have completed the puzzle correctly!';
                 completionModal.style.display = 'block';
                 stopTimer();
-                console.log('Puzzle completed correctly.');
             } else if (!autocheck) {
                 completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
                 completionModal.style.display = 'block';
-                console.log('Puzzle filled but not all answers are correct.');
             }
         }
     }
