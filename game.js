@@ -9,6 +9,14 @@ let difficultyLevel = 'easy';
 let startTime;
 let timerInterval;
 
+function parseIndex(index) {
+    return parseInt(index, 10);
+}
+
+function parseIndices(clueIndex, tileIndex) {
+    return [parseIndex(clueIndex), parseIndex(tileIndex)];
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadPuzzle().then(() => {
         initializeEventListeners();
@@ -22,7 +30,6 @@ async function loadPuzzle() {
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const year = String(currentDate.getFullYear()).slice(-2);
     const puzzleHtmlFileName = `puzzles/${year}-${month}-${day}.html`;
-
 
     try {
         const response = await fetch(puzzleHtmlFileName);
@@ -56,6 +63,7 @@ async function loadPuzzle() {
 
         initializeGameAfterLoading();
     } catch (error) {
+        console.error('Error loading puzzle:', error);
         document.getElementById('puzzle-container').innerText = 'Puzzle not found for today. Please check back later.';
     }
 }
@@ -90,6 +98,7 @@ function initializeEventListeners() {
             clearAllHighlights();
             checkAllTiles();
         }
+        saveGameState();
     });
 }
 
@@ -107,7 +116,6 @@ function initializeGameAfterLoading() {
 }
 
 function setupGame() {
-
     const container = document.getElementById('puzzle-container');
     container.innerHTML = '';
 
@@ -203,7 +211,8 @@ function saveGameState() {
         revealMappings,
         difficultyLevel,
         filledTiles: [],
-        startTime: new Date().toISOString()
+        startTime: new Date().toISOString(),
+        autocheck
     };
 
     document.querySelectorAll('.tile').forEach(tile => {
@@ -230,6 +239,7 @@ function loadGameState() {
     revealMappings = gameState.revealMappings;
     difficultyLevel = gameState.difficultyLevel;
     startTime = new Date(gameState.startTime);
+    autocheck = gameState.autocheck;
 
     gameState.filledTiles.forEach(tileData => {
         const tile = document.getElementById(`answer-${tileData.clueIndex}-${tileData.tileIndex}`);
@@ -241,6 +251,7 @@ function loadGameState() {
     });
 
     updateSelectedButton(difficultyLevel);
+    document.getElementById('autocheck-toggle').checked = autocheck;
 }
 
 function showLevelChangePopup(level) {
@@ -297,42 +308,46 @@ function updateSelectedButton(level) {
 }
 
 function handleFocus(clueIndex, tileIndex) {
+    const [parsedClueIndex, parsedTileIndex] = parseIndices(clueIndex, tileIndex);
     clearAllHighlights();
 
-    const mappingKey = `${clueIndex}-${tileIndex}`;
-    const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+    const mappingKey = `${parsedClueIndex}-${parsedTileIndex}`;
+    const currentTile = document.getElementById(`answer-${parsedClueIndex}-${parsedTileIndex}`);
     currentTile.classList.add('highlight');
     currentTile.dataset.previousValue = currentTile.value;
 
-    if (revealMappings[difficultyLevel][mappingKey]) {
+    if (revealMappings[difficultyLevel] && revealMappings[difficultyLevel][mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-        targetTile.classList.add('highlight');
+        if (targetTile) targetTile.classList.add('highlight');
     }
 }
 
 function clearTile(tile, clueIndex, tileIndex) {
+    const [parsedClueIndex, parsedTileIndex] = parseIndices(clueIndex, tileIndex);
     tile.value = '';
     tile.dataset.revealed = 'false';
     tile.classList.remove('incorrect');
 
     if (!autocheck || (autocheck && !tile.disabled)) {
-        const mappingKey = `${clueIndex}-${tileIndex}`;
-        if (revealMappings[difficultyLevel][mappingKey]) {
+        const mappingKey = `${parsedClueIndex}-${parsedTileIndex}`;
+        if (revealMappings[difficultyLevel] && revealMappings[difficultyLevel][mappingKey]) {
             const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
             const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-            if (!autocheck || (autocheck && !targetTile.disabled)) {
+            if (targetTile && (!autocheck || (autocheck && !targetTile.disabled))) {
                 targetTile.value = '';
                 targetTile.dataset.revealed = 'false';
                 targetTile.classList.remove('incorrect');
             }
         }
     }
+    saveGameState();
 }
 
 function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
+    const [parsedClueIndex, parsedTileIndex] = parseIndices(clueIndex, tileIndex);
     const userInput = tile.value.trim();
-    const isCorrect = userInput.toLowerCase() === correctAnswer[tileIndex].toLowerCase();
+    const isCorrect = userInput.toLowerCase() === correctAnswer[parsedTileIndex].toLowerCase();
 
     if (userInput === '') {
         tile.classList.remove('incorrect');
@@ -347,71 +362,75 @@ function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
         }
     }
 
-    propagateLetter(clueIndex, tileIndex, tile.value, isCorrect);
+    propagateLetter(parsedClueIndex, parsedTileIndex, tile.value, isCorrect);
 }
 
 function propagateLetter(clueIndex, tileIndex, value, isCorrect) {
     const mappingKey = `${clueIndex}-${tileIndex}`;
-    if (revealMappings[difficultyLevel][mappingKey]) {
+    if (revealMappings[difficultyLevel] && revealMappings[difficultyLevel][mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-        targetTile.value = value.toUpperCase();
-        targetTile.dataset.revealed = 'true';
+        if (targetTile) {
+            targetTile.value = value.toUpperCase();
+            targetTile.dataset.revealed = 'true';
 
-        if (autocheck) {
-            if (isCorrect) {
-                targetTile.disabled = true;
-                targetTile.classList.remove('incorrect');
-            } else {
-                targetTile.classList.add('incorrect');
+            if (autocheck) {
+                if (isCorrect) {
+                    targetTile.disabled = true;
+                    targetTile.classList.remove('incorrect');
+                } else {
+                    targetTile.classList.add('incorrect');
+                }
             }
         }
     }
+    saveGameState();
 }
 
 function handleKeydown(event, clueIndex, tileIndex) {
-    const tile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+    const [parsedClueIndex, parsedTileIndex] = parseIndices(clueIndex, tileIndex);
+    const tile = document.getElementById(`answer-${parsedClueIndex}-${parsedTileIndex}`);
 
     if (event.key === 'Backspace') {
         event.preventDefault();
         if (tile.value !== '') {
-            clearTile(tile, clueIndex, tileIndex);
+            clearTile(tile, parsedClueIndex, parsedTileIndex);
         } else {
             if (!autocheck) {
-                handleBackspaceNoAutoCheck(clueIndex, tileIndex);
+                handleBackspaceNoAutoCheck(parsedClueIndex, parsedTileIndex);
             } else {
-                handleBackspaceAutoCheck(clueIndex, tileIndex);
+                handleBackspaceAutoCheck(parsedClueIndex, parsedTileIndex);
             }
         }
     } else if (event.key === 'Delete') {
         event.preventDefault();
         if (tile.value !== '') {
-            clearTile(tile, clueIndex, tileIndex);
-            const nextTile = getNextTile(clueIndex, tileIndex);
+            clearTile(tile, parsedClueIndex, parsedTileIndex);
+            const nextTile = getNextTile(parsedClueIndex, parsedTileIndex);
             if (nextTile) {
                 nextTile.focus();
             }
         } else {
-            const previousTile = getPreviousTile(clueIndex, tileIndex);
+            const previousTile = getPreviousTile(parsedClueIndex, parsedTileIndex);
             if (previousTile) {
                 previousTile.focus();
                 if (previousTile.value !== '') {
-                    clearTile(previousTile, parseInt(previousTile.dataset.clueIndex), parseInt(previousTile.dataset.tileIndex));
+                    clearTile(previousTile, parseIndex(previousTile.dataset.clueIndex), parseIndex(previousTile.dataset.tileIndex));
                 }
             }
         }
     } else if (event.key === 'ArrowLeft') {
         event.preventDefault();
-        moveLeft(clueIndex, tileIndex);
+        moveLeft(parsedClueIndex, parsedTileIndex);
     } else if (event.key === 'ArrowRight') {
         event.preventDefault();
-        moveRight(clueIndex, tileIndex);
+        moveRight(parsedClueIndex, parsedTileIndex);
     } else if (event.key === 'ArrowUp') {
         event.preventDefault();
-        moveToPreviousClue(clueIndex, tileIndex);
+        moveToPreviousClue(parsedClueIndex, parsedTileIndex);
     } else if (event.key === 'ArrowDown') {
         event.preventDefault();
-        moveToNextClue(clueIndex, tileIndex);
+        moveToNextClue(parsedClueIndex);
     }
 }
 
@@ -442,61 +461,60 @@ function focusNextTile(clueIndex, tileIndex) {
         }
     }
 
-    for (let i = 0; i < clueLength; i++) {
-        const nextTile = document.getElementById(`answer-${clueIndex}-${i}`);
-        if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
-            nextTile.focus();
-            return;
-        }
-    }
-
-    moveToNextClue(clueIndex, tileIndex);
+    // If we've reached here, move to the next clue
+    moveToNextClue(clueIndex);
 }
 
 function moveToNextClue(clueIndex) {
     let nextClueIndex = clueIndex + 1;
+    let loopCount = 0;
 
-    while (nextClueIndex !== clueIndex) {
+    while (loopCount < clues.length) {
         if (nextClueIndex >= clues.length) {
             nextClueIndex = 0;
         }
 
-        const nextClueLength = clues[nextClueIndex].answer.length;
-
-        for (let i = 0; i < nextClueLength; i++) {
-            const nextTile = document.getElementById(`answer-${nextClueIndex}-${i}`);
-            if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
-                nextTile.focus();
-                return;
+        const nextClue = clues[nextClueIndex];
+        if (nextClue && nextClue.answer) {
+            for (let i = 0; i < nextClue.answer.length; i++) {
+                const nextTile = document.getElementById(`answer-${nextClueIndex}-${i}`);
+                if (nextTile && (nextTile.value.trim() === '' || (autocheck && nextTile.classList.contains('incorrect')))) {
+                    nextTile.focus();
+                    return;
+                }
             }
         }
 
         nextClueIndex++;
+        loopCount++;
     }
 }
 
 function handleInput(event, clueIndex, tileIndex, correctAnswer) {
-    const tile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+    const [parsedClueIndex, parsedTileIndex] = parseIndices(clueIndex, tileIndex);
+    const tile = document.getElementById(`answer-${parsedClueIndex}-${parsedTileIndex}`);
     const previousValue = tile.dataset.previousValue || '';
     const userInput = event.target.value.trim().toUpperCase();
 
     if (previousValue && previousValue !== userInput) {
-        clearTile(tile, clueIndex, tileIndex);
+        clearTile(tile, parsedClueIndex, parsedTileIndex);
     }
 
     tile.value = userInput;
 
-    if (tile.value.length == 2) {
-        tile.value = tile.value.replace(previousValue, '');
+    if (tile.value.length > 1) {
+        tile.value = tile.value.slice(-1);
     }
 
     tile.dataset.previousValue = tile.value;
-    checkTile(clueIndex, tileIndex, correctAnswer, tile);
+    checkTile(parsedClueIndex, parsedTileIndex, correctAnswer, tile);
 
     if (tile.value === '') {
-        clearTile(tile, clueIndex, tileIndex);
-    } else if (tile.value.length === 1) {
-        focusNextTile(clueIndex, tileIndex);
+        clearTile(tile, parsedClueIndex, parsedTileIndex);
+    } else if (tile.value.length === 1 && parsedTileIndex < correctAnswer.length - 1) {
+        focusNextTile(parsedClueIndex, parsedTileIndex);
+    } else if (tile.value.length === 1 && parsedTileIndex === correctAnswer.length - 1) {
+        moveToNextClue(parsedClueIndex);
     }
 
     checkGameCompletion();
@@ -513,9 +531,10 @@ function handleBackspaceNoAutoCheck(clueIndex, tileIndex) {
     let previousTile = getPreviousTile(clueIndex, tileIndex);
 
     if (previousTile) {
-        clearTile(previousTile, previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
+        clearTile(previousTile, parseIndex(previousTile.dataset.clueIndex), parseIndex(previousTile.dataset.tileIndex));
         previousTile.focus();
     }
+    saveGameState();
 }
 
 function handleBackspaceAutoCheck(clueIndex, tileIndex) {
@@ -528,17 +547,18 @@ function handleBackspaceAutoCheck(clueIndex, tileIndex) {
     let previousTile = getPreviousTile(clueIndex, tileIndex);
 
     while (previousTile && previousTile.value.toLowerCase() === clues[previousTile.dataset.clueIndex]?.answer[previousTile.dataset.tileIndex]?.toLowerCase()) {
-        previousTile = getPreviousTile(previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
+        previousTile = getPreviousTile(parseIndex(previousTile.dataset.clueIndex), parseIndex(previousTile.dataset.tileIndex));
     }
 
     while (previousTile && previousTile.disabled) {
-        previousTile = getPreviousTile(previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
+        previousTile = getPreviousTile(parseIndex(previousTile.dataset.clueIndex), parseIndex(previousTile.dataset.tileIndex));
     }
 
     if (previousTile) {
-        clearTile(previousTile, previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
+        clearTile(previousTile, parseIndex(previousTile.dataset.clueIndex), parseIndex(previousTile.dataset.tileIndex));
         previousTile.focus();
     }
+    saveGameState();
 }
 
 function getPreviousTile(clueIndex, tileIndex) {
@@ -594,7 +614,7 @@ function moveLeft(clueIndex, tileIndex) {
 
     if (autocheck) {
         while (previousTile && previousTile.value.toLowerCase() === clues[previousTile.dataset.clueIndex]?.answer[previousTile.dataset.tileIndex]?.toLowerCase()) {
-            previousTile = getPreviousTile(previousTile.dataset.clueIndex, previousTile.dataset.tileIndex);
+            previousTile = getPreviousTile(parseIndex(previousTile.dataset.clueIndex), parseIndex(previousTile.dataset.tileIndex));
         }
     }
 
@@ -604,12 +624,12 @@ function moveLeft(clueIndex, tileIndex) {
 }
 
 function moveRight(clueIndex, tileIndex) {
-    let nextTile = getNextTile(parseInt(clueIndex), parseInt(tileIndex));
+    let nextTile = getNextTile(clueIndex, tileIndex);
 
     if (autocheck) {
         while (nextTile && clues[nextTile.dataset.clueIndex] && nextTile.value.toLowerCase() === clues[nextTile.dataset.clueIndex].answer[nextTile.dataset.tileIndex].toLowerCase()) {
-            const currentClueIndex = parseInt(nextTile.dataset.clueIndex);
-            const currentTileIndex = parseInt(nextTile.dataset.tileIndex);
+            const currentClueIndex = parseIndex(nextTile.dataset.clueIndex);
+            const currentTileIndex = parseIndex(nextTile.dataset.tileIndex);
             nextTile = getNextTile(currentClueIndex, currentTileIndex);
         }
     }
@@ -621,7 +641,7 @@ function moveRight(clueIndex, tileIndex) {
 
 function deletePropagatedLetter(clueIndex, tileIndex) {
     const mappingKey = `${clueIndex}-${tileIndex}`;
-    if (revealMappings[difficultyLevel][mappingKey]) {
+    if (revealMappings[difficultyLevel] && revealMappings[difficultyLevel][mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
         if (targetTile && targetTile.classList.contains('index-' + revealMappings[difficultyLevel][mappingKey].index)) {
@@ -657,13 +677,14 @@ function clearAllHighlights() {
 }
 
 function handleBlur(clueIndex, tileIndex) {
-    const mappingKey = `${clueIndex}-${tileIndex}`;
-    const currentTile = document.getElementById(`answer-${clueIndex}-${tileIndex}`);
+    const [parsedClueIndex, parsedTileIndex] = parseIndices(clueIndex, tileIndex);
+    const mappingKey = `${parsedClueIndex}-${parsedTileIndex}`;
+    const currentTile = document.getElementById(`answer-${parsedClueIndex}-${parsedTileIndex}`);
     currentTile.classList.remove('highlight');
-    if (revealMappings[difficultyLevel][mappingKey]) {
+    if (revealMappings[difficultyLevel] && revealMappings[difficultyLevel][mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
-        targetTile.classList.remove('highlight');
+        if (targetTile) targetTile.classList.remove('highlight');
     }
 }
 
@@ -699,4 +720,12 @@ function checkGameCompletion() {
             }
         }
     }
+}
+
+function updateTimer() {
+    // Timer is running in the background, no need to update any UI element
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
 }
