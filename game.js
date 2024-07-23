@@ -526,7 +526,7 @@ function handleInput(event, clueIndex, tileIndex, correctAnswer) {
 
     if (tile.value === '') {
         clearTile(tile, clueIndex, tileIndex);
-    } else {
+    } else if (tile.value.length === 1) {
         focusNextTile(clueIndex, tileIndex);
     }
 
@@ -635,12 +635,12 @@ function moveLeft(clueIndex, tileIndex) {
 }
 
 function moveRight(clueIndex, tileIndex) {
-    let nextTile = getNextTile(clueIndex, tileIndex);
+    let nextTile = getNextTile(parseInt(clueIndex), parseInt(tileIndex));
 
     if (autocheck) {
         while (nextTile && clues[nextTile.dataset.clueIndex] && nextTile.value.toLowerCase() === clues[nextTile.dataset.clueIndex].answer[nextTile.dataset.tileIndex].toLowerCase()) {
-            const currentClueIndex = parseInt(nextTile.dataset.clueIndex, 10);
-            const currentTileIndex = parseInt(nextTile.dataset.tileIndex, 10);
+            const currentClueIndex = parseInt(nextTile.dataset.clueIndex);
+            const currentTileIndex = parseInt(nextTile.dataset.tileIndex);
             nextTile = getNextTile(currentClueIndex, currentTileIndex);
         }
     }
