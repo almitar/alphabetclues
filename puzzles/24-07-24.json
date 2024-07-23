@@ -1,0 +1,162 @@
+{
+    "clues": [
+      {
+        "letter": "A",
+        "clue": "What might turn lay to layover?",
+        "type": "starts",
+        "answer": "autocomplete"
+      },
+      {
+        "letter": "B",
+        "clue": "Tolkien's ring bearer",
+        "type": "starts",
+        "answer": "bilbo"
+      },
+      {
+        "letter": "C",
+        "clue": "Central part of a computer, for short",
+        "type": "starts",
+        "answer": "cpu"
+      },
+      {
+        "letter": "D",
+        "clue": "Crab or lobster?",
+        "type": "starts",
+        "answer": "decapod"
+      },
+      {
+        "letter": "E",
+        "clue": "Greeting that saves postage",
+        "type": "starts",
+        "answer": "ecard"
+      },
+      {
+        "letter": "F",
+        "clue": "What's it all about, ___?'",
+        "type": "contains",
+        "answer": "alfie"
+      },
+      {
+        "letter": "G",
+        "clue": "Wood flooring feature",
+        "type": "starts",
+        "answer": "grain"
+      },
+      {
+        "letter": "H",
+        "clue": "It may be tipped as a sign of respect",
+        "type": "starts",
+        "answer": "hat"
+      },
+      {
+        "letter": "I",
+        "clue": "Counselor's response",
+        "type": "starts",
+        "answer": "isee"
+      },
+      {
+        "letter": "J",
+        "clue": "Rocker Hendrix",
+        "type": "starts",
+        "answer": "jimi"
+      },
+      {
+        "letter": "K",
+        "clue": "KO",
+        "type": "starts",
+        "answer": "knockout"
+      },
+      {
+        "letter": "L",
+        "clue": "Monday, in Toledo",
+        "type": "starts",
+        "answer": "lunes"
+      },
+      {
+        "letter": "M",
+        "clue": "Say wrongly",
+        "type": "starts",
+        "answer": "misstate"
+      },
+      {
+        "letter": "N",
+        "clue": "Excluding",
+        "type": "starts",
+        "answer": "not"
+      },
+      {
+        "letter": "O",
+        "clue": "Appoints as a minister",
+        "type": "starts",
+        "answer": "ordains"
+      },
+      {
+        "letter": "P",
+        "clue": "Skin opening",
+        "type": "starts",
+        "answer": "pore"
+      },
+      {
+        "letter": "Q",
+        "clue": "Social protocol",
+        "type": "contains",
+        "answer": "etiquette"
+      },
+      {
+        "letter": "R",
+        "clue": "More optimistic",
+        "type": "starts",
+        "answer": "rosier"
+      },
+      {
+        "letter": "S",
+        "clue": "Martial arts instructor",
+        "type": "starts",
+        "answer": "sensei"
+      },
+      {
+        "letter": "T",
+        "clue": "Skill needed when asked 'Can you tell I've put on weight?'",
+        "type": "starts",
+        "answer": "tact"
+      },
+      {
+        "letter": "U",
+        "clue": "Not cool",
+        "type": "starts",
+        "answer": "unhip"
+      },
+      {
+        "letter": "V",
+        "clue": "Near-reality",
+        "type": "starts",
+        "answer": "virtual"
+      },
+      {
+        "letter": "W",
+        "clue": "Under",
+        "type": "contains",
+        "answer": "below"
+      },
+      {
+        "letter": "X",
+        "clue": "Reworked version of a song",
+        "type": "contains",
+        "answer": "remix"
+      },
+      {
+        "letter": "Y",
+        "clue": "'Wrecking Ball' singer Cyrus",
+        "type": "contains",
+        "answer": "miley"
+      },
+      {
+        "letter": "Z",
+        "clue": "Grouped set of lines in poetry",
+        "type": "contains",
+        "answer": "stanza"
+      }
+    ],
+    "revealMapping": {}
+  }
+  

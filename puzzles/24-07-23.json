@@ -1,162 +1,161 @@
 {
-    "clues": [
-      {
-        "letter": "A",
-        "clue": "Puts on TV",
-        "type": "starts",
-        "answer": "airs"
-      },
-      {
-        "letter": "B",
-        "clue": "Holder of sale goods",
-        "type": "starts",
-        "answer": "bin"
-      },
-      {
-        "letter": "C",
-        "clue": "Incessant talker",
-        "type": "starts",
-        "answer": "chatterbox"
-      },
-      {
-        "letter": "D",
-        "clue": "Norse war god",
-        "type": "contains",
-        "answer": "odin"
-      },
-      {
-        "letter": "E",
-        "clue": "Move, to a real estate agent",
-        "type": "contains",
-        "answer": "relo"
-      },
-      {
-        "letter": "F",
-        "clue": "The Sopranos' subject",
-        "type": "contains",
-        "answer": "mafia"
-      },
-      {
-        "letter": "G",
-        "clue": "Relaxes enforcement",
-        "type": "starts",
-        "answer": "goessoft"
-      },
-      {
-        "letter": "H",
-        "clue": "Mass destruction",
-        "type": "starts",
-        "answer": "havoc"
-      },
-      {
-        "letter": "I",
-        "clue": "Be a passenger",
-        "type": "contains",
-        "answer": "ride"
-      },
-      {
-        "letter": "J",
-        "clue": "Alternative to Newark or La Guardia",
-        "type": "starts",
-        "answer": "jfk"
-      },
-      {
-        "letter": "K",
-        "clue": "Hop, ___ and a jump",
-        "type": "contains",
-        "answer": "skip"
-      },
-      {
-        "letter": "L",
-        "clue": "Gift upon arriving in Honolulu",
-        "type": "starts",
-        "answer": "lei"
-      },
-      {
-        "letter": "M",
-        "clue": "Chow ___",
-        "type": "starts",
-        "answer": "mein"
-      },
-      {
-        "letter": "N",
-        "clue": "Calm down ... stop crying",
-        "type": "starts",
-        "answer": "nomoretears"
-      },
-      {
-        "letter": "O",
-        "clue": "___ law (electricity principle)",
-        "type": "starts",
-        "answer": "ohms"
-      },
-      {
-        "letter": "P",
-        "clue": "In pieces",
-        "type": "contains",
-        "answer": "apart"
-      },
-      {
-        "letter": "Q",
-        "clue": "Ruler of a buzzing kingdom",
-        "type": "starts",
-        "answer": "queenbee"
-      },
-      {
-        "letter": "R",
-        "clue": "Gay Nineties, e.g",
-        "type": "contains",
-        "answer": "era"
-      },
-      {
-        "letter": "S",
-        "clue": "Asparagus units",
-        "type": "starts",
-        "answer": "spears"
-      },
-      {
-        "letter": "T",
-        "clue": "Duck or one of its colors",
-        "type": "starts",
-        "answer": "teal"
-      },
-      {
-        "letter": "U",
-        "clue": "Spoil",
-        "type": "contains",
-        "answer": "turn"
-      },
-      {
-        "letter": "V",
-        "clue": "Words, informally",
-        "type": "starts",
-        "answer": "vocab"
-      },
-      {
-        "letter": "W",
-        "clue": "Meaning of 'vidi' in 'Veni, vidi, vici'",
-        "type": "contains",
-        "answer": "isaw"
-      },
-      {
-        "letter": "X",
-        "clue": "Reworked version of a song",
-        "type": "contains",
-        "answer": "remix"
-      },
-      {
-        "letter": "Y",
-        "clue": "Star Wars' sage",
-        "type": "starts",
-        "answer": "yoda"
-      },
-      {
-        "letter": "Z",
-        "clue": "Fertilized egg",
-        "type": "starts",
-        "answer": "zygote"
-      }
-    ],
-    "revealMapping": {}
-  }
-  
+  "clues": [
+    {
+      "letter": "A",
+      "clue": "Paintings, sculptures, etc",
+      "type": "starts",
+      "answer": "art"
+    },
+    {
+      "letter": "B",
+      "clue": "Feathered accessory",
+      "type": "starts",
+      "answer": "boa"
+    },
+    {
+      "letter": "C",
+      "clue": "Physics Nobelist of 1903 and Chemistry Nobelist of 1911",
+      "type": "starts",
+      "answer": "curie"
+    },
+    {
+      "letter": "D",
+      "clue": "Giving sort",
+      "type": "starts",
+      "answer": "donor"
+    },
+    {
+      "letter": "E",
+      "clue": "___'acte",
+      "type": "starts",
+      "answer": "entr"
+    },
+    {
+      "letter": "F",
+      "clue": "End-of-week cry",
+      "type": "contains",
+      "answer": "tgif"
+    },
+    {
+      "letter": "G",
+      "clue": "Information on a boarding pass or stadium ticket",
+      "type": "starts",
+      "answer": "gate"
+    },
+    {
+      "letter": "H",
+      "clue": "Cool",
+      "type": "starts",
+      "answer": "hip"
+    },
+    {
+      "letter": "I",
+      "clue": "Declaration while sweating",
+      "type": "starts",
+      "answer": "imhot"
+    },
+    {
+      "letter": "J",
+      "clue": "Provided the music for a party, informally",
+      "type": "contains",
+      "answer": "djed"
+    },
+    {
+      "letter": "K",
+      "clue": "Minor improvement in the Dow",
+      "type": "contains",
+      "answer": "uptick"
+    },
+    {
+      "letter": "L",
+      "clue": "Young chap",
+      "type": "starts",
+      "answer": "lad"
+    },
+    {
+      "letter": "M",
+      "clue": "More, in Seville",
+      "type": "starts",
+      "answer": "mas"
+    },
+    {
+      "letter": "N",
+      "clue": "Recent: Prefix",
+      "type": "starts",
+      "answer": "neo"
+    },
+    {
+      "letter": "O",
+      "clue": "Yellow spread",
+      "type": "starts",
+      "answer": "oleo"
+    },
+    {
+      "letter": "P",
+      "clue": "Command-P on a Mac",
+      "type": "starts",
+      "answer": "print"
+    },
+    {
+      "letter": "Q",
+      "clue": "Robin Hood's carrying case",
+      "type": "starts",
+      "answer": "quiver"
+    },
+    {
+      "letter": "R",
+      "clue": "Square root symbol",
+      "type": "starts",
+      "answer": "radicalsign"
+    },
+    {
+      "letter": "S",
+      "clue": "It may have a cherry on top",
+      "type": "starts",
+      "answer": "sundae"
+    },
+    {
+      "letter": "T",
+      "clue": "Slender",
+      "type": "starts",
+      "answer": "thin"
+    },
+    {
+      "letter": "U",
+      "clue": "Employ",
+      "type": "starts",
+      "answer": "use"
+    },
+    {
+      "letter": "V",
+      "clue": "Ingredient in a Bloody Mary",
+      "type": "starts",
+      "answer": "vodka"
+    },
+    {
+      "letter": "W",
+      "clue": "This is ridiculous!'",
+      "type": "starts",
+      "answer": "whatajoke"
+    },
+    {
+      "letter": "X",
+      "clue": "Incessant talker",
+      "type": "contains",
+      "answer": "chatterbox"
+    },
+    {
+      "letter": "Y",
+      "clue": "More than enough",
+      "type": "contains",
+      "answer": "plenty"
+    },
+    {
+      "letter": "Z",
+      "clue": "Enthusiasm",
+      "type": "starts",
+      "answer": "zeal"
+    }
+  ],
+  "revealMapping": {}
+}
