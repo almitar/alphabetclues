@@ -91,7 +91,7 @@ function initializeEventListeners() {
             } else {
                 tile.classList.add('autocheckoff');
                 tile.disabled = false;
-                tile.classList.remove('incorrect');
+                tile.classList.remove('incorrect', 'correct');
             }
         });
         if (autocheck) {
@@ -363,8 +363,7 @@ function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
     const isCorrect = userInput.toLowerCase() === correctAnswer[parsedTileIndex].toLowerCase();
 
     if (userInput === '') {
-        tile.classList.remove('incorrect');
-        tile.classList.remove('correct');
+        tile.classList.remove('incorrect', 'correct');
     } else if (isCorrect) {
         tile.classList.remove('incorrect');
         tile.classList.add('correct');
@@ -378,32 +377,37 @@ function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
         }
     }
 
-    propagateLetter(parsedClueIndex, parsedTileIndex, tile.value, isCorrect);
+    propagateLetter(parsedClueIndex, parsedTileIndex, tile.value);
 }
 
-function propagateLetter(clueIndex, tileIndex, value, isCorrect) {
+function propagateLetter(clueIndex, tileIndex, value) {
     const mappingKey = `${clueIndex}-${tileIndex}`;
     if (revealMappings[difficultyLevel] && revealMappings[difficultyLevel][mappingKey]) {
         const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
         if (targetTile) {
-            console.log(`Propagating letter: from ${clueIndex}-${tileIndex} to ${targetClueIndex}-${targetLetterIndex}, value: ${value}`);
             targetTile.value = value.toUpperCase();
             targetTile.dataset.revealed = 'true';
 
+            // Check correctness against the target clue
+            const targetClue = clues[targetClueIndex];
+            const isCorrect = value.toLowerCase() === targetClue.answer[targetLetterIndex].toLowerCase();
+
             if (autocheck) {
                 if (isCorrect) {
-                    targetTile.disabled = true;
                     targetTile.classList.remove('incorrect');
+                    targetTile.classList.add('correct');
+                    targetTile.disabled = true;
                 } else {
+                    targetTile.classList.remove('correct');
                     targetTile.classList.add('incorrect');
+                    targetTile.disabled = false;
                 }
+            } else {
+                targetTile.classList.remove('correct', 'incorrect');
+                targetTile.disabled = false;
             }
-        } else {
-            console.error(`Target tile not found: answer-${targetClueIndex}-${targetLetterIndex}`);
         }
-    } else {
-        console.log(`No mapping found for ${clueIndex}-${tileIndex} in difficulty ${difficultyLevel}`);
     }
     saveGameState();
 }
