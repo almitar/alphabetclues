@@ -229,7 +229,7 @@ function saveGameState() {
             clueIndex: tile.dataset.clueIndex,
             tileIndex: tile.dataset.tileIndex,
             value: tile.value,
-            disabled: tile.disabled,
+            disabled: tile.disabled, // Change this line
             revealed: tile.dataset.revealed,
             correct: tile.classList.contains('correct'),
             incorrect: tile.classList.contains('incorrect')
@@ -256,15 +256,37 @@ function loadGameState() {
         const tile = document.getElementById(`answer-${tileData.clueIndex}-${tileData.tileIndex}`);
         if (tile) {
             tile.value = tileData.value;
-            tile.disabled = tileData.disabled === 'true';
+            tile.disabled = tileData.disabled; // Change this line
             tile.dataset.revealed = tileData.revealed;
-            if (tileData.correct) tile.classList.add('correct');
-            if (tileData.incorrect) tile.classList.add('incorrect');
+            if (tileData.correct) {
+                tile.classList.add('correct');
+                if (autocheck) {
+                    tile.disabled = true; // Explicitly set disabled for correct tiles when autocheck is on
+                }
+            }
+            if (tileData.incorrect) {
+                tile.classList.add('incorrect');
+            }
         }
     });
 
     updateSelectedButton(difficultyLevel);
     document.getElementById('autocheck-toggle').checked = autocheck;
+
+    // Re-apply autocheck logic after loading state
+    if (autocheck) {
+        document.querySelectorAll('.tile').forEach(tile => {
+            tile.classList.remove('autocheckoff');
+            if (tile.classList.contains('correct')) {
+                tile.disabled = true;
+            }
+        });
+    } else {
+        document.querySelectorAll('.tile').forEach(tile => {
+            tile.classList.add('autocheckoff');
+            tile.disabled = false;
+        });
+    }
 }
 
 function showLevelChangePopup(level) {
@@ -364,14 +386,14 @@ function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
 
     if (userInput === '') {
         tile.classList.remove('incorrect', 'correct');
+        tile.disabled = false; // Add this line
     } else if (isCorrect) {
         tile.classList.remove('incorrect');
         tile.classList.add('correct');
-        if (autocheck) {
-            tile.disabled = true;
-        }
+        tile.disabled = autocheck; // Change this line
     } else {
         tile.classList.remove('correct');
+        tile.disabled = false; // Add this line
         if (autocheck) {
             tile.classList.add('incorrect');
         }
