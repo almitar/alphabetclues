@@ -110,6 +110,15 @@ function initializeGameAfterLoading() {
 
     clues = puzzleData.clues;
     revealMappings = puzzleData.revealMappings;
+    
+    // Ensure all difficulty levels are present
+    ['easy', 'medium', 'advanced'].forEach(level => {
+        if (!revealMappings[level]) {
+            console.warn(`No reveal mappings found for ${level} difficulty. Creating empty object.`);
+            revealMappings[level] = {};
+        }
+    });
+
     window.revealMappings = revealMappings;
     setupGame();
     reinitializePuzzle();
@@ -221,7 +230,9 @@ function saveGameState() {
             tileIndex: tile.dataset.tileIndex,
             value: tile.value,
             disabled: tile.disabled,
-            revealed: tile.dataset.revealed
+            revealed: tile.dataset.revealed,
+            correct: tile.classList.contains('correct'),
+            incorrect: tile.classList.contains('incorrect')
         });
     });
 
@@ -247,6 +258,8 @@ function loadGameState() {
             tile.value = tileData.value;
             tile.disabled = tileData.disabled === 'true';
             tile.dataset.revealed = tileData.revealed;
+            if (tileData.correct) tile.classList.add('correct');
+            if (tileData.incorrect) tile.classList.add('incorrect');
         }
     });
 
@@ -351,12 +364,15 @@ function checkTile(clueIndex, tileIndex, correctAnswer, tile) {
 
     if (userInput === '') {
         tile.classList.remove('incorrect');
+        tile.classList.remove('correct');
     } else if (isCorrect) {
         tile.classList.remove('incorrect');
+        tile.classList.add('correct');
         if (autocheck) {
             tile.disabled = true;
         }
     } else {
+        tile.classList.remove('correct');
         if (autocheck) {
             tile.classList.add('incorrect');
         }
@@ -371,6 +387,7 @@ function propagateLetter(clueIndex, tileIndex, value, isCorrect) {
         const { targetClueIndex, targetLetterIndex } = revealMappings[difficultyLevel][mappingKey];
         const targetTile = document.getElementById(`answer-${targetClueIndex}-${targetLetterIndex}`);
         if (targetTile) {
+            console.log(`Propagating letter: from ${clueIndex}-${tileIndex} to ${targetClueIndex}-${targetLetterIndex}, value: ${value}`);
             targetTile.value = value.toUpperCase();
             targetTile.dataset.revealed = 'true';
 
@@ -382,7 +399,11 @@ function propagateLetter(clueIndex, tileIndex, value, isCorrect) {
                     targetTile.classList.add('incorrect');
                 }
             }
+        } else {
+            console.error(`Target tile not found: answer-${targetClueIndex}-${targetLetterIndex}`);
         }
+    } else {
+        console.log(`No mapping found for ${clueIndex}-${tileIndex} in difficulty ${difficultyLevel}`);
     }
     saveGameState();
 }
@@ -507,7 +528,10 @@ function handleInput(event, clueIndex, tileIndex, correctAnswer) {
     }
 
     tile.dataset.previousValue = tile.value;
+    
+    // Check and propagate the letter
     checkTile(parsedClueIndex, parsedTileIndex, correctAnswer, tile);
+    propagateLetter(parsedClueIndex, parsedTileIndex, tile.value);
 
     if (tile.value === '') {
         clearTile(tile, parsedClueIndex, parsedTileIndex);
@@ -714,6 +738,19 @@ function checkGameCompletion() {
                 completionMessage.innerText = 'Congratulations! You have completed the puzzle correctly!';
                 completionModal.style.display = 'block';
                 stopTimer();
+                
+                // Mark all tiles as correct and disable them
+                clues.forEach((clue, clueIndex) => {
+                    for (let i = 0; i < clue.answer.length; i++) {
+                        const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+                        if (tile) {
+                            tile.classList.add('correct');
+                            tile.disabled = true;
+                        }
+                    }
+                });
+                
+                saveGameState(); // Save the final state
             } else if (!autocheck) {
                 completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
                 completionModal.style.display = 'block';

@@ -219,21 +219,29 @@ function generateRevealMappings() {
 
         for (const letter in letterGroups) {
             const group = letterGroups[letter];
-            if (group.length > 1) {
+            if (group.length >= 2) {  // Only process groups with 2 or more letters
                 shuffleArray(group);
-                for (let i = 0; i < group.length; i += 3) {
+                for (let i = 0; i < group.length - 1; i += 2) {  // Ensure we always have pairs
                     do {
                         currentNumber = getRandomInt(1, 100);
                     } while (usedNumbers.has(currentNumber));
                     usedNumbers.add(currentNumber);
-
-                    group.slice(i, i + 3).forEach((item, index, arr) => {
-                        mappings[`${item.clueIndex}-${item.letterIndex}`] = {
-                            targetClueIndex: arr[(index + 1) % arr.length].clueIndex,
-                            targetLetterIndex: arr[(index + 1) % arr.length].letterIndex,
-                            index: currentNumber
-                        };
-                    });
+        
+                    // Map only pairs of letters
+                    const item1 = group[i];
+                    const item2 = group[i + 1];
+                    
+                    mappings[`${item1.clueIndex}-${item1.letterIndex}`] = {
+                        targetClueIndex: item2.clueIndex,
+                        targetLetterIndex: item2.letterIndex,
+                        index: currentNumber
+                    };
+                    
+                    mappings[`${item2.clueIndex}-${item2.letterIndex}`] = {
+                        targetClueIndex: item1.clueIndex,
+                        targetLetterIndex: item1.letterIndex,
+                        index: currentNumber
+                    };
                 }
             }
         }
