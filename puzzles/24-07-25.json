@@ -1,0 +1,162 @@
+{
+    "clues": [
+      {
+        "letter": "A",
+        "clue": "Supped",
+        "type": "starts",
+        "answer": "ate"
+      },
+      {
+        "letter": "B",
+        "clue": "Swan Lake' and others",
+        "type": "starts",
+        "answer": "ballets"
+      },
+      {
+        "letter": "C",
+        "clue": "Ace of hearts, among others",
+        "type": "starts",
+        "answer": "card"
+      },
+      {
+        "letter": "D",
+        "clue": "Remove, as spam",
+        "type": "starts",
+        "answer": "delete"
+      },
+      {
+        "letter": "E",
+        "clue": "Scottish Gaelic",
+        "type": "starts",
+        "answer": "erse"
+      },
+      {
+        "letter": "F",
+        "clue": "Speedy",
+        "type": "starts",
+        "answer": "fast"
+      },
+      {
+        "letter": "G",
+        "clue": "Bing competitor",
+        "type": "starts",
+        "answer": "google"
+      },
+      {
+        "letter": "H",
+        "clue": "Wife of Zeus",
+        "type": "starts",
+        "answer": "hera"
+      },
+      {
+        "letter": "I",
+        "clue": "Writer Calvino",
+        "type": "starts",
+        "answer": "italo"
+      },
+      {
+        "letter": "J",
+        "clue": "College concentration",
+        "type": "contains",
+        "answer": "major"
+      },
+      {
+        "letter": "K",
+        "clue": "Zap in the microwave",
+        "type": "contains",
+        "answer": "nuke"
+      },
+      {
+        "letter": "L",
+        "clue": "Respond angrily",
+        "type": "starts",
+        "answer": "lashout"
+      },
+      {
+        "letter": "M",
+        "clue": "French river of World War I",
+        "type": "starts",
+        "answer": "marne"
+      },
+      {
+        "letter": "N",
+        "clue": "Jimmy Fallon's network",
+        "type": "starts",
+        "answer": "nbc"
+      },
+      {
+        "letter": "O",
+        "clue": "Geishas' sashes",
+        "type": "starts",
+        "answer": "obis"
+      },
+      {
+        "letter": "P",
+        "clue": "Hammer's rounded end",
+        "type": "starts",
+        "answer": "peen"
+      },
+      {
+        "letter": "Q",
+        "clue": "Silences",
+        "type": "starts",
+        "answer": "quells"
+      },
+      {
+        "letter": "R",
+        "clue": "Mountain chain",
+        "type": "starts",
+        "answer": "range"
+      },
+      {
+        "letter": "S",
+        "clue": "Dos x tres",
+        "type": "starts",
+        "answer": "seis"
+      },
+      {
+        "letter": "T",
+        "clue": "Pronoun for a Quaker",
+        "type": "starts",
+        "answer": "thee"
+      },
+      {
+        "letter": "U",
+        "clue": "Optimistic",
+        "type": "starts",
+        "answer": "upbeat"
+      },
+      {
+        "letter": "V",
+        "clue": "Dunes transport",
+        "type": "contains",
+        "answer": "atv"
+      },
+      {
+        "letter": "W",
+        "clue": "Broad",
+        "type": "starts",
+        "answer": "wide"
+      },
+      {
+        "letter": "X",
+        "clue": "Maker of the Submariner and Daytona watches",
+        "type": "contains",
+        "answer": "rolex"
+      },
+      {
+        "letter": "Y",
+        "clue": "New Haven famous school",
+        "type": "starts",
+        "answer": "yale"
+      },
+      {
+        "letter": "Z",
+        "clue": "Frank Baum's famous story about a magical journey",
+        "type": "contains",
+        "answer": "wizardofoz"
+      }
+    ],
+    "revealMapping": {}
+  }
+  
