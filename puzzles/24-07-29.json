@@ -1,0 +1,162 @@
+{
+    "clues": [
+      {
+        "letter": "A",
+        "clue": "Best of the best, sportswise",
+        "type": "starts",
+        "answer": "allstars"
+      },
+      {
+        "letter": "B",
+        "clue": "Seriously overcook",
+        "type": "starts",
+        "answer": "burn"
+      },
+      {
+        "letter": "C",
+        "clue": "Includes",
+        "type": "starts",
+        "answer": "contains"
+      },
+      {
+        "letter": "D",
+        "clue": "Malicious gossip",
+        "type": "starts",
+        "answer": "dirt"
+      },
+      {
+        "letter": "E",
+        "clue": "Mess up",
+        "type": "starts",
+        "answer": "err"
+      },
+      {
+        "letter": "F",
+        "clue": "Light",
+        "type": "contains",
+        "answer": "lowfat"
+      },
+      {
+        "letter": "G",
+        "clue": "Former part of Portuguese India",
+        "type": "starts",
+        "answer": "goa"
+      },
+      {
+        "letter": "H",
+        "clue": "Greetings",
+        "type": "starts",
+        "answer": "hellos"
+      },
+      {
+        "letter": "I",
+        "clue": "Brainy",
+        "type": "starts",
+        "answer": "intelligent"
+      },
+      {
+        "letter": "J",
+        "clue": "Coffee-themed coding language",
+        "type": "starts",
+        "answer": "java"
+      },
+      {
+        "letter": "K",
+        "clue": "Superman's adoptive parents",
+        "type": "starts",
+        "answer": "kents"
+      },
+      {
+        "letter": "L",
+        "clue": "Tight's opposite",
+        "type": "starts",
+        "answer": "loose"
+      },
+      {
+        "letter": "M",
+        "clue": "___ Carta",
+        "type": "starts",
+        "answer": "magna"
+      },
+      {
+        "letter": "N",
+        "clue": "Calm down, stop crying",
+        "type": "starts",
+        "answer": "nomoretears"
+      },
+      {
+        "letter": "O",
+        "clue": "Norse war god",
+        "type": "starts",
+        "answer": "odin"
+      },
+      {
+        "letter": "P",
+        "clue": "Yamaha products",
+        "type": "starts",
+        "answer": "pianos"
+      },
+      {
+        "letter": "Q",
+        "clue": "Ruler of a buzzing kingdom",
+        "type": "starts",
+        "answer": "queenbee"
+      },
+      {
+        "letter": "R",
+        "clue": "Be a passenger",
+        "type": "starts",
+        "answer": "ride"
+      },
+      {
+        "letter": "S",
+        "clue": "Meager",
+        "type": "starts",
+        "answer": "scant"
+      },
+      {
+        "letter": "T",
+        "clue": "Flooring installer",
+        "type": "starts",
+        "answer": "tiler"
+      },
+      {
+        "letter": "U",
+        "clue": "One of the five basic tastes",
+        "type": "starts",
+        "answer": "umami"
+      },
+      {
+        "letter": "V",
+        "clue": "Traditional DVR device",
+        "type": "contains",
+        "answer": "tivo"
+      },
+      {
+        "letter": "W",
+        "clue": "Meaning of 'vidi' in 'Veni, vidi, vici'",
+        "type": "contains",
+        "answer": "isaw"
+      },
+      {
+        "letter": "X",
+        "clue": "Online source for TV shows",
+        "type": "contains",
+        "answer": "netflix"
+      },
+      {
+        "letter": "Y",
+        "clue": "Calendar's scope",
+        "type": "starts",
+        "answer": "year"
+      },
+      {
+        "letter": "Z",
+        "clue": "Grab",
+        "type": "contains",
+        "answer": "seize"
+      }
+    ],
+    "revealMapping": {}
+  }
+  

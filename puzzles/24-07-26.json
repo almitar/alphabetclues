@@ -1,0 +1,162 @@
+{
+    "clues": [
+      {
+        "letter": "A",
+        "clue": "Absolutely right!",
+        "type": "starts",
+        "answer": "amen"
+      },
+      {
+        "letter": "B",
+        "clue": "Garment under a blouse",
+        "type": "starts",
+        "answer": "bra"
+      },
+      {
+        "letter": "C",
+        "clue": "Pringles holder",
+        "type": "starts",
+        "answer": "can"
+      },
+      {
+        "letter": "D",
+        "clue": "Ate",
+        "type": "starts",
+        "answer": "dined"
+      },
+      {
+        "letter": "E",
+        "clue": "Bald baby bird",
+        "type": "starts",
+        "answer": "eaglet"
+      },
+      {
+        "letter": "F",
+        "clue": "Meal eaten with long-handled forks",
+        "type": "starts",
+        "answer": "fondue"
+      },
+      {
+        "letter": "G",
+        "clue": "Noteworthy",
+        "type": "starts",
+        "answer": "great"
+      },
+      {
+        "letter": "H",
+        "clue": "Insinuate",
+        "type": "starts",
+        "answer": "hintat"
+      },
+      {
+        "letter": "I",
+        "clue": "Suffix with sulf-",
+        "type": "starts",
+        "answer": "ide"
+      },
+      {
+        "letter": "J",
+        "clue": "Alternative to Newark or La Guardia",
+        "type": "starts",
+        "answer": "jfk"
+      },
+      {
+        "letter": "K",
+        "clue": "Corporate benefit",
+        "type": "contains",
+        "answer": "perk"
+      },
+      {
+        "letter": "L",
+        "clue": "Load with cargo",
+        "type": "starts",
+        "answer": "lade"
+      },
+      {
+        "letter": "M",
+        "clue": "Papa's partner",
+        "type": "starts",
+        "answer": "mama"
+      },
+      {
+        "letter": "N",
+        "clue": "Casino pass?",
+        "type": "starts",
+        "answer": "nobet"
+      },
+      {
+        "letter": "O",
+        "clue": "October birthstone",
+        "type": "starts",
+        "answer": "opal"
+      },
+      {
+        "letter": "P",
+        "clue": "Window segment",
+        "type": "starts",
+        "answer": "pane"
+      },
+      {
+        "letter": "Q",
+        "clue": "Outdoor meals with hamburgers or hot dogs",
+        "type": "contains",
+        "answer": "bbqs"
+      },
+      {
+        "letter": "R",
+        "clue": "Recite quickly, with 'off'",
+        "type": "starts",
+        "answer": "reel"
+      },
+      {
+        "letter": "S",
+        "clue": "Do permanent damage",
+        "type": "starts",
+        "answer": "scar"
+      },
+      {
+        "letter": "T",
+        "clue": "Up to, briefly",
+        "type": "starts",
+        "answer": "til"
+      },
+      {
+        "letter": "U",
+        "clue": "Still undecided",
+        "type": "starts",
+        "answer": "upintheair"
+      },
+      {
+        "letter": "V",
+        "clue": "Remote button abbr",
+        "type": "starts",
+        "answer": "vol"
+      },
+      {
+        "letter": "W",
+        "clue": "Earnestly declare",
+        "type": "contains",
+        "answer": "swearto"
+      },
+      {
+        "letter": "X",
+        "clue": "Prefix for six",
+        "type": "contains",
+        "answer": "hexa"
+      },
+      {
+        "letter": "Y",
+        "clue": "The Beatles' '___ in the Life'",
+        "type": "contains",
+        "answer": "aday"
+      },
+      {
+        "letter": "Z",
+        "clue": "Like windows",
+        "type": "contains",
+        "answer": "glazed"
+      }
+    ],
+    "revealMapping": {}
+  }
+  

@@ -1,0 +1,162 @@
+{
+    "clues": [
+      {
+        "letter": "A",
+        "clue": "Get comfortable with, as new conditions",
+        "type": "starts",
+        "answer": "adaptto"
+      },
+      {
+        "letter": "B",
+        "clue": "Furry X-Men character",
+        "type": "starts",
+        "answer": "beast"
+      },
+      {
+        "letter": "C",
+        "clue": "Quarter of a quart in cooking",
+        "type": "starts",
+        "answer": "cup"
+      },
+      {
+        "letter": "D",
+        "clue": "Sup",
+        "type": "starts",
+        "answer": "dine"
+      },
+      {
+        "letter": "E",
+        "clue": "And so on",
+        "type": "starts",
+        "answer": "etcetera"
+      },
+      {
+        "letter": "F",
+        "clue": "Protein source for vegans",
+        "type": "contains",
+        "answer": "tofu"
+      },
+      {
+        "letter": "G",
+        "clue": "Round vending machine candy",
+        "type": "starts",
+        "answer": "gumball"
+      },
+      {
+        "letter": "H",
+        "clue": "Suffers from",
+        "type": "starts",
+        "answer": "has"
+      },
+      {
+        "letter": "I",
+        "clue": "Dies ___ (Latin hymn)",
+        "type": "starts",
+        "answer": "irae"
+      },
+      {
+        "letter": "J",
+        "clue": "College concentration",
+        "type": "contains",
+        "answer": "major"
+      },
+      {
+        "letter": "K",
+        "clue": "Cope",
+        "type": "contains",
+        "answer": "hackit"
+      },
+      {
+        "letter": "L",
+        "clue": "Full speed ahead!",
+        "type": "starts",
+        "answer": "letitrip"
+      },
+      {
+        "letter": "M",
+        "clue": "Two-lanes-into-one highway sign",
+        "type": "starts",
+        "answer": "merge"
+      },
+      {
+        "letter": "N",
+        "clue": "Just a small bite",
+        "type": "starts",
+        "answer": "nip"
+      },
+      {
+        "letter": "O",
+        "clue": "Extra energy",
+        "type": "starts",
+        "answer": "oomph"
+      },
+      {
+        "letter": "P",
+        "clue": "Legal assistant, briefly",
+        "type": "starts",
+        "answer": "para"
+      },
+      {
+        "letter": "Q",
+        "clue": "British pound, informally",
+        "type": "starts",
+        "answer": "quid"
+      },
+      {
+        "letter": "R",
+        "clue": "Towel holders",
+        "type": "starts",
+        "answer": "rods"
+      },
+      {
+        "letter": "S",
+        "clue": "Japanese chess",
+        "type": "starts",
+        "answer": "shogi"
+      },
+      {
+        "letter": "T",
+        "clue": "Voila!",
+        "type": "starts",
+        "answer": "there"
+      },
+      {
+        "letter": "U",
+        "clue": "Computer's ___ port",
+        "type": "starts",
+        "answer": "usb"
+      },
+      {
+        "letter": "V",
+        "clue": "TV hookups",
+        "type": "starts",
+        "answer": "vcrs"
+      },
+      {
+        "letter": "W",
+        "clue": "Damp and cold",
+        "type": "contains",
+        "answer": "raw"
+      },
+      {
+        "letter": "X",
+        "clue": "1945 Alamogordo, informally",
+        "type": "contains",
+        "answer": "explosion"
+      },
+      {
+        "letter": "Y",
+        "clue": "Robust",
+        "type": "contains",
+        "answer": "lusty"
+      },
+      {
+        "letter": "Z",
+        "clue": "____ Pinza of 'South Pacific'",
+        "type": "contains",
+        "answer": "ezio"
+      }
+    ],
+    "revealMapping": {}
+  }
+  

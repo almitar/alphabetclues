@@ -1,161 +1,162 @@
 {
-  "clues": [
-    {
-      "letter": "A",
-      "clue": "Paintings, sculptures, etc",
-      "type": "starts",
-      "answer": "art"
-    },
-    {
-      "letter": "B",
-      "clue": "Feathered accessory",
-      "type": "starts",
-      "answer": "boa"
-    },
-    {
-      "letter": "C",
-      "clue": "Physics Nobelist of 1903 and Chemistry Nobelist of 1911",
-      "type": "starts",
-      "answer": "curie"
-    },
-    {
-      "letter": "D",
-      "clue": "Giving sort",
-      "type": "starts",
-      "answer": "donor"
-    },
-    {
-      "letter": "E",
-      "clue": "___'acte",
-      "type": "starts",
-      "answer": "entr"
-    },
-    {
-      "letter": "F",
-      "clue": "End-of-week cry",
-      "type": "contains",
-      "answer": "tgif"
-    },
-    {
-      "letter": "G",
-      "clue": "Information on a boarding pass or stadium ticket",
-      "type": "starts",
-      "answer": "gate"
-    },
-    {
-      "letter": "H",
-      "clue": "Cool",
-      "type": "starts",
-      "answer": "hip"
-    },
-    {
-      "letter": "I",
-      "clue": "Declaration while sweating",
-      "type": "starts",
-      "answer": "imhot"
-    },
-    {
-      "letter": "J",
-      "clue": "Provided the music for a party, informally",
-      "type": "contains",
-      "answer": "djed"
-    },
-    {
-      "letter": "K",
-      "clue": "Minor improvement in the Dow",
-      "type": "contains",
-      "answer": "uptick"
-    },
-    {
-      "letter": "L",
-      "clue": "Young chap",
-      "type": "starts",
-      "answer": "lad"
-    },
-    {
-      "letter": "M",
-      "clue": "More, in Seville",
-      "type": "starts",
-      "answer": "mas"
-    },
-    {
-      "letter": "N",
-      "clue": "Recent: Prefix",
-      "type": "starts",
-      "answer": "neo"
-    },
-    {
-      "letter": "O",
-      "clue": "Yellow spread",
-      "type": "starts",
-      "answer": "oleo"
-    },
-    {
-      "letter": "P",
-      "clue": "Command-P on a Mac",
-      "type": "starts",
-      "answer": "print"
-    },
-    {
-      "letter": "Q",
-      "clue": "Robin Hood's carrying case",
-      "type": "starts",
-      "answer": "quiver"
-    },
-    {
-      "letter": "R",
-      "clue": "Square root symbol",
-      "type": "starts",
-      "answer": "radicalsign"
-    },
-    {
-      "letter": "S",
-      "clue": "It may have a cherry on top",
-      "type": "starts",
-      "answer": "sundae"
-    },
-    {
-      "letter": "T",
-      "clue": "Slender",
-      "type": "starts",
-      "answer": "thin"
-    },
-    {
-      "letter": "U",
-      "clue": "Employ",
-      "type": "starts",
-      "answer": "use"
-    },
-    {
-      "letter": "V",
-      "clue": "Ingredient in a Bloody Mary",
-      "type": "starts",
-      "answer": "vodka"
-    },
-    {
-      "letter": "W",
-      "clue": "This is ridiculous!'",
-      "type": "starts",
-      "answer": "whatajoke"
-    },
-    {
-      "letter": "X",
-      "clue": "Incessant talker",
-      "type": "contains",
-      "answer": "chatterbox"
-    },
-    {
-      "letter": "Y",
-      "clue": "More than enough",
-      "type": "contains",
-      "answer": "plenty"
-    },
-    {
-      "letter": "Z",
-      "clue": "Enthusiasm",
-      "type": "starts",
-      "answer": "zeal"
-    }
-  ],
-  "revealMapping": {}
-}
+    "clues": [
+      {
+        "letter": "A",
+        "clue": "Picnic pest",
+        "type": "starts",
+        "answer": "ant"
+      },
+      {
+        "letter": "B",
+        "clue": "Minor mistake",
+        "type": "starts",
+        "answer": "booboo"
+      },
+      {
+        "letter": "C",
+        "clue": "Hold on (to)",
+        "type": "starts",
+        "answer": "cling"
+      },
+      {
+        "letter": "D",
+        "clue": "Prefix with sexual",
+        "type": "starts",
+        "answer": "demi"
+      },
+      {
+        "letter": "E",
+        "clue": "Set up",
+        "type": "starts",
+        "answer": "erect"
+      },
+      {
+        "letter": "F",
+        "clue": "Kabul native",
+        "type": "contains",
+        "answer": "afghan"
+      },
+      {
+        "letter": "G",
+        "clue": "Area for nobles",
+        "type": "starts",
+        "answer": "gentdistrict"
+      },
+      {
+        "letter": "H",
+        "clue": "Male ownership word",
+        "type": "starts",
+        "answer": "his"
+      },
+      {
+        "letter": "I",
+        "clue": "Surrounded by, redundantly",
+        "type": "starts",
+        "answer": "inamongst"
+      },
+      {
+        "letter": "J",
+        "clue": "Shared pic, often",
+        "type": "starts",
+        "answer": "jpeg"
+      },
+      {
+        "letter": "K",
+        "clue": "Antlered animal",
+        "type": "contains",
+        "answer": "elk"
+      },
+      {
+        "letter": "L",
+        "clue": "Didn't tell the truth",
+        "type": "starts",
+        "answer": "lied"
+      },
+      {
+        "letter": "M",
+        "clue": "Hajj destination",
+        "type": "starts",
+        "answer": "mecca"
+      },
+      {
+        "letter": "N",
+        "clue": "Dieter's salad request",
+        "type": "starts",
+        "answer": "nodressing"
+      },
+      {
+        "letter": "O",
+        "clue": "How money might be won or lost",
+        "type": "starts",
+        "answer": "onabet"
+      },
+      {
+        "letter": "P",
+        "clue": "___ Beta Kappa",
+        "type": "starts",
+        "answer": "phi"
+      },
+      {
+        "letter": "Q",
+        "clue": "Evil character in 'Snow White'",
+        "type": "starts",
+        "answer": "queen"
+      },
+      {
+        "letter": "R",
+        "clue": "Philosopher Descartes",
+        "type": "starts",
+        "answer": "rene"
+      },
+      {
+        "letter": "S",
+        "clue": "Goes downhill during very cold weather",
+        "type": "starts",
+        "answer": "sleds"
+      },
+      {
+        "letter": "T",
+        "clue": "Burrito's cousin",
+        "type": "starts",
+        "answer": "taco"
+      },
+      {
+        "letter": "U",
+        "clue": "Encourage",
+        "type": "starts",
+        "answer": "urge"
+      },
+      {
+        "letter": "V",
+        "clue": "Vice ___",
+        "type": "starts",
+        "answer": "versa"
+      },
+      {
+        "letter": "W",
+        "clue": "Like Tom Jones, by birth",
+        "type": "starts",
+        "answer": "welsh"
+      },
+      {
+        "letter": "X",
+        "clue": "Authorized substitute",
+        "type": "contains",
+        "answer": "proxy"
+      },
+      {
+        "letter": "Y",
+        "clue": "In a generous manner",
+        "type": "contains",
+        "answer": "nobly"
+      },
+      {
+        "letter": "Z",
+        "clue": "Area",
+        "type": "starts",
+        "answer": "zone"
+      }
+    ],
+    "revealMapping": {}
+  }
+  
