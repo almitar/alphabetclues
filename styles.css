@@ -171,8 +171,9 @@ input:checked + .slider:before {
 }
 
 .modal-content {
+    position: relative;
     background-color: #fefefe;
-    margin: 5% auto;
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
@@ -183,4 +184,69 @@ input:checked + .slider:before {
 button {
     margin: 10px;
     padding: 10px;
+    font-family: 'Helvetica Neue';
+}
+
+#share-button, #completion-share-button, #completion-ok-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#share-button {
+    margin-right: 0;
+}
+
+#completion-ok-button {
+    background-color: #af4c4c;
+}
+
+#share-button i, #completion-share-button i {
+    font-size: 16px;
+}
+
+#title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#completion-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#completion-message {
+    margin-top: 30px;
+}
+
+#subheading {
+    margin-top: 10px;
 }

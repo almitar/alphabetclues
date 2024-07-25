@@ -76,13 +76,15 @@ function initializeEventListeners() {
     const continueButton = document.getElementById('continue-button');
     const completionOkButton = document.getElementById('completion-ok-button');
     const autocheckToggle = document.getElementById('autocheck-toggle');
+    const shareButton = document.getElementById('share-button');
+    const completionShareButton = document.getElementById('completion-share-button');
+    const closeButton = document.querySelector('.close-button');
 
     if (easyButton) easyButton.addEventListener('click', () => showLevelChangePopup('easy'));
     if (mediumButton) mediumButton.addEventListener('click', () => showLevelChangePopup('medium'));
     if (advancedButton) advancedButton.addEventListener('click', () => showLevelChangePopup('advanced'));
     if (backButton) backButton.addEventListener('click', closeLevelChangePopup);
     if (continueButton) continueButton.addEventListener('click', confirmLevelChange);
-    if (completionOkButton) completionOkButton.addEventListener('click', closeCompletionPopup);
     if (autocheckToggle) autocheckToggle.addEventListener('change', () => {
         autocheck = autocheckToggle.checked;
         document.querySelectorAll('.tile').forEach(tile => {
@@ -100,7 +102,19 @@ function initializeEventListeners() {
         }
         saveGameState();
     });
+    if (shareButton) shareButton.addEventListener('click', sharePuzzle);
+    if (completionShareButton) completionShareButton.addEventListener('click', sharePuzzle);
+    if (closeButton) closeButton.addEventListener('click', closeCompletionPopup);
+    if (completionOkButton) completionOkButton.addEventListener('click', closeCompletionPopup);
+
+    // Add event listener for 'Esc' key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape") {
+            closeCompletionPopup();
+        }
+    });
 }
+
 
 function initializeGameAfterLoading() {
     const puzzleData = window.puzzleData;
@@ -210,18 +224,21 @@ function initializeControls() {
 
 function startTimer() {
     startTime = new Date();
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(updateTimer, 1000);
 }
 
 function saveGameState() {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const elapsedTime = new Date() - startTime; // Calculate elapsed time
     const gameState = {
         clues,
         revealMappings,
         difficultyLevel,
         filledTiles: [],
-        startTime: new Date().toISOString(),
-        autocheck
+        startTime: startTime.toISOString(),
+        elapsedTime, // Save elapsed time
+        autocheck,
+        completionTime: new Date().toISOString(),
+        isCompleted: false
     };
 
     document.querySelectorAll('.tile').forEach(tile => {
@@ -229,19 +246,25 @@ function saveGameState() {
             clueIndex: tile.dataset.clueIndex,
             tileIndex: tile.dataset.tileIndex,
             value: tile.value,
-            disabled: tile.disabled, // Change this line
+            disabled: tile.disabled,
             revealed: tile.dataset.revealed,
             correct: tile.classList.contains('correct'),
             incorrect: tile.classList.contains('incorrect')
         });
     });
 
-    localStorage.setItem(`gameState-${new Date().toISOString().split('T')[0]}`, JSON.stringify(gameState));
+    if (document.querySelectorAll('.tile.correct').length === document.querySelectorAll('.tile').length) {
+        gameState.isCompleted = true;
+    }
+
+    localStorage.setItem(`gameState-${currentDate}`, JSON.stringify(gameState));
 }
 
 function loadGameState() {
-    const savedGameState = localStorage.getItem(`gameState-${new Date().toISOString().split('T')[0]}`);
+    const currentDate = new Date().toISOString().split('T')[0];
+    const savedGameState = localStorage.getItem(`gameState-${currentDate}`);
     if (!savedGameState) {
+        startTime = new Date();
         return;
     }
 
@@ -249,20 +272,20 @@ function loadGameState() {
     clues = gameState.clues;
     revealMappings = gameState.revealMappings;
     difficultyLevel = gameState.difficultyLevel;
-    startTime = new Date(gameState.startTime);
     autocheck = gameState.autocheck;
+
+    // Calculate the new start time based on the elapsed time
+    const elapsedTime = gameState.elapsedTime || 0;
+    startTime = new Date(new Date() - elapsedTime);
 
     gameState.filledTiles.forEach(tileData => {
         const tile = document.getElementById(`answer-${tileData.clueIndex}-${tileData.tileIndex}`);
         if (tile) {
             tile.value = tileData.value;
-            tile.disabled = tileData.disabled; // Change this line
+            tile.disabled = tileData.disabled;
             tile.dataset.revealed = tileData.revealed;
             if (tileData.correct) {
                 tile.classList.add('correct');
-                if (autocheck) {
-                    tile.disabled = true; // Explicitly set disabled for correct tiles when autocheck is on
-                }
             }
             if (tileData.incorrect) {
                 tile.classList.add('incorrect');
@@ -272,6 +295,14 @@ function loadGameState() {
 
     updateSelectedButton(difficultyLevel);
     document.getElementById('autocheck-toggle').checked = autocheck;
+
+    if (gameState.isCompleted) {
+        document.querySelectorAll('.tile').forEach(tile => {
+            tile.disabled = true;
+            tile.classList.add('correct');
+        });
+        showCompletionModal(new Date(gameState.completionTime));
+    }
 
     // Re-apply autocheck logic after loading state
     if (autocheck) {
@@ -284,9 +315,116 @@ function loadGameState() {
     } else {
         document.querySelectorAll('.tile').forEach(tile => {
             tile.classList.add('autocheckoff');
-            tile.disabled = false;
+            if (!gameState.isCompleted) {
+                tile.disabled = false;
+            }
         });
     }
+}
+
+function checkGameCompletion() {
+    let allCorrect = true;
+    let allFilled = true;
+
+    clues.forEach((clue, clueIndex) => {
+        for (let i = 0; i < clue.answer.length; i++) {
+            const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+            if (!tile) continue;
+            const userInput = tile.value.trim().toLowerCase();
+            if (userInput === '') {
+                allFilled = false;
+            }
+            if (userInput !== clue.answer[i].toLowerCase()) {
+                allCorrect = false;
+            }
+        }
+    });
+
+    if (allFilled) {
+        if (allCorrect) {
+            showCompletionModal();
+        } else {
+            showIncorrectCompletionModal();
+        }
+    }
+}
+
+function showCompletionModal(completionTime = new Date()) {
+    const completionModal = document.getElementById('completion-modal');
+    const completionMessage = document.getElementById('completion-message');
+    const completionShareButton = document.getElementById('completion-share-button');
+    const completionOkButton = document.getElementById('completion-ok-button');
+    const nextPuzzleMessage = document.getElementById('next-puzzle-message');
+    
+    if (completionModal && completionMessage && completionShareButton && completionOkButton && nextPuzzleMessage) {
+        const timeTaken = Math.floor((completionTime - startTime) / 1000); // in seconds
+        const minutes = Math.floor(timeTaken / 60);
+        const seconds = timeTaken % 60;
+        const timeString = `${minutes}m ${seconds}s`;
+
+        completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
+        completionShareButton.style.display = 'inline-block';
+        completionOkButton.style.display = 'none';
+        
+        // Start the countdown for the next puzzle
+        startNextPuzzleCountdown(nextPuzzleMessage);
+        
+        completionModal.style.display = 'block';
+        
+        // Mark all tiles as correct and disable them
+        clues.forEach((clue, clueIndex) => {
+            for (let i = 0; i < clue.answer.length; i++) {
+                const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+                if (tile) {
+                    tile.classList.add('correct');
+                    tile.disabled = true;
+                }
+            }
+        });
+        
+        saveGameState(); // Save the final state
+    }
+}
+
+function showIncorrectCompletionModal() {
+    const completionModal = document.getElementById('completion-modal');
+    const completionMessage = document.getElementById('completion-message');
+    const completionShareButton = document.getElementById('completion-share-button');
+    const completionOkButton = document.getElementById('completion-ok-button');
+    
+    if (completionModal && completionMessage && completionShareButton && completionOkButton) {
+        completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
+        completionShareButton.style.display = 'none';
+        completionOkButton.style.display = 'inline-block';
+        completionModal.style.display = 'block';
+    }
+}
+
+function startNextPuzzleCountdown(messageElement) {
+    console.log("Starting next puzzle countdown", messageElement); // Debugging line
+
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+    function updateCountdown() {
+        const now = new Date();
+        const timeLeft = tomorrow - now;
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        const countdownText = `Next puzzle available in: ${hours}h ${minutes}m ${seconds}s`;
+        console.log("Updating countdown:", countdownText); // Debugging line
+        messageElement.innerText = countdownText;
+
+        if (timeLeft > 0) {
+            setTimeout(updateCountdown, 1000);
+        } else {
+            messageElement.innerText = 'New puzzle available now!';
+        }
+    }
+
+    updateCountdown();
 }
 
 function showLevelChangePopup(level) {
@@ -484,16 +622,28 @@ function handleKeydown(event, clueIndex, tileIndex) {
 function moveToPreviousClue(clueIndex, tileIndex) {
     let previousClueIndex = clueIndex - 1;
 
-    if (previousClueIndex < 0) {
-        previousClueIndex = clues.length - 1;
+    while (previousClueIndex >= 0) {
+        const previousClueLength = clues[previousClueIndex].answer.length;
+        for (let i = previousClueLength - 1; i >= 0; i--) {
+            const previousTile = document.getElementById(`answer-${previousClueIndex}-${i}`);
+            if (previousTile && (!autocheck || (autocheck && !previousTile.disabled && previousTile.value.trim() === ''))) {
+                previousTile.focus();
+                return;
+            }
+        }
+        previousClueIndex--;
     }
 
-    const previousClueLength = clues[previousClueIndex].answer.length;
-    const targetTileIndex = Math.min(tileIndex, previousClueLength - 1);
-
-    const previousTile = document.getElementById(`answer-${previousClueIndex}-${targetTileIndex}`);
-    if (previousTile) {
-        previousTile.focus();
+    // If no empty tile is found above, wrap around to the last clue
+    for (let i = clues.length - 1; i > clueIndex; i--) {
+        const clueLength = clues[i].answer.length;
+        for (let j = clueLength - 1; j >= 0; j--) {
+            const tile = document.getElementById(`answer-${i}-${j}`);
+            if (tile && (!autocheck || (autocheck && !tile.disabled && tile.value.trim() === ''))) {
+                tile.focus();
+                return;
+            }
+        }
     }
 }
 
@@ -759,9 +909,20 @@ function checkGameCompletion() {
     if (allFilled) {
         const completionModal = document.getElementById('completion-modal');
         const completionMessage = document.getElementById('completion-message');
-        if (completionModal && completionMessage) {
+        const completionShareButton = document.getElementById('completion-share-button');
+        const completionOkButton = document.getElementById('completion-ok-button');
+        
+        if (completionModal && completionMessage && completionShareButton && completionOkButton) {
             if (allCorrect) {
-                completionMessage.innerText = 'Congratulations! You have completed the puzzle correctly!';
+                const endTime = new Date();
+                const timeTaken = Math.floor((endTime - startTime) / 1000); // in seconds
+                const minutes = Math.floor(timeTaken / 60);
+                const seconds = timeTaken % 60;
+                const timeString = `${minutes}m ${seconds}s`;
+
+                completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
+                completionShareButton.style.display = 'inline-block';
+                completionOkButton.style.display = 'none';
                 completionModal.style.display = 'block';
                 stopTimer();
                 
@@ -777,18 +938,36 @@ function checkGameCompletion() {
                 });
                 
                 saveGameState(); // Save the final state
-            } else if (!autocheck) {
+            } else {
                 completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
+                completionShareButton.style.display = 'none';
+                completionOkButton.style.display = 'inline-block';
                 completionModal.style.display = 'block';
             }
         }
     }
 }
 
-function updateTimer() {
-    // Timer is running in the background, no need to update any UI element
-}
 
 function stopTimer() {
     clearInterval(timerInterval);
+}
+
+function sharePuzzle() {
+    const shareUrl = 'https://alphabetclues.com';
+    const shareText = 'Check out this Alphabet Clues puzzle!';
+
+    if (navigator.share) {
+        navigator.share({
+            title: 'Alphabet Clues',
+            text: shareText,
+            url: shareUrl,
+        })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing:', error));
+    } else {
+        // Fallback for browsers that don't support the Web Share API
+        const fallbackShareText = `${shareText} ${shareUrl}`;
+        prompt('Copy this link to share:', fallbackShareText);
+    }
 }

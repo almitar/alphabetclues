@@ -6,11 +6,15 @@
     <title>Alphabet Clues</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🅰️</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div id="game-container">
-        <h1>ALPHABET CLUES</h1>
-        <p>Find the hidden words for each letter of the alphabet. Tiles that have a black dot and highlight at the same time mean they contain the same letter.</p>
+        <div id="title-container">
+            <h1>ALPHABET CLUES</h1>
+            <button id="share-button">Share <i class="fas fa-share-alt"></i></button>
+        </div>                
+        <p id="subheading">Find the hidden words for each letter of the alphabet. Tiles that have a black dot and highlight at the same time mean they contain the same letter.</p>
         <div id="game-controls">
             <div class="level-buttons">
                 <button id="easy-level" class="selected">Normal</button>
@@ -40,8 +44,13 @@
     </div>
     <div id="completion-modal" class="modal">
         <div class="modal-content">
+            <span class="close-button">&times;</span>
             <p id="completion-message"></p>
-            <button id="completion-ok-button">OK</button>
+            <div id="completion-buttons">
+                <button id="completion-share-button">Share <i class="fas fa-share-alt"></i></button>
+                <button id="completion-ok-button">Keep Trying</button>
+            </div>
+            <p id="next-puzzle-message"></p>
         </div>
     </div>
 
