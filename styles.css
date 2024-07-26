@@ -210,6 +210,7 @@ button {
 
 #share-button i, #completion-share-button i {
     font-size: 16px;
+    vertical-align: middle;
 }
 
 #title-container {

@@ -227,17 +227,20 @@ function startTimer() {
 }
 
 function saveGameState() {
+    
+    updateElapsedTime();
+
     const currentDate = new Date().toISOString().split('T')[0];
-    const elapsedTime = new Date() - startTime; // Calculate elapsed time
+    const now = new Date();
+    const elapsedTime = now - startTime;
     const gameState = {
         clues,
         revealMappings,
         difficultyLevel,
         filledTiles: [],
-        startTime: startTime.toISOString(),
-        elapsedTime, // Save elapsed time
+        totalElapsedTime: (parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0) + elapsedTime,
+        lastSaveTime: now.toISOString(),
         autocheck,
-        completionTime: new Date().toISOString(),
         isCompleted: false
     };
 
@@ -258,13 +261,18 @@ function saveGameState() {
     }
 
     localStorage.setItem(`gameState-${currentDate}`, JSON.stringify(gameState));
+    localStorage.setItem(`totalElapsedTime-${currentDate}`, gameState.totalElapsedTime);
 }
 
 function loadGameState() {
+    resetDailyTimer(); // Reset timer if it's a new day
+
     const currentDate = new Date().toISOString().split('T')[0];
     const savedGameState = localStorage.getItem(`gameState-${currentDate}`);
+    
     if (!savedGameState) {
         startTime = new Date();
+        localStorage.setItem(`totalElapsedTime-${currentDate}`, '0');
         return;
     }
 
@@ -274,9 +282,7 @@ function loadGameState() {
     difficultyLevel = gameState.difficultyLevel;
     autocheck = gameState.autocheck;
 
-    // Calculate the new start time based on the elapsed time
-    const elapsedTime = gameState.elapsedTime || 0;
-    startTime = new Date(new Date() - elapsedTime);
+    startTime = new Date(); // Reset startTime to now
 
     gameState.filledTiles.forEach(tileData => {
         const tile = document.getElementById(`answer-${tileData.clueIndex}-${tileData.tileIndex}`);
@@ -301,7 +307,10 @@ function loadGameState() {
             tile.disabled = true;
             tile.classList.add('correct');
         });
-        showCompletionModal(new Date(gameState.completionTime));
+        showCompletionModal();
+    } else {
+        // Start the timer only if the game is not completed
+        startTimer();
     }
 
     // Re-apply autocheck logic after loading state
@@ -322,34 +331,14 @@ function loadGameState() {
     }
 }
 
-function checkGameCompletion() {
-    let allCorrect = true;
-    let allFilled = true;
+function showCompletionModal() {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const totalElapsedTime = parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
+    
+    const minutes = Math.floor(totalElapsedTime / 60000);
+    const seconds = Math.floor((totalElapsedTime % 60000) / 1000);
+    const timeString = `${minutes}m ${seconds}s`;
 
-    clues.forEach((clue, clueIndex) => {
-        for (let i = 0; i < clue.answer.length; i++) {
-            const tile = document.getElementById(`answer-${clueIndex}-${i}`);
-            if (!tile) continue;
-            const userInput = tile.value.trim().toLowerCase();
-            if (userInput === '') {
-                allFilled = false;
-            }
-            if (userInput !== clue.answer[i].toLowerCase()) {
-                allCorrect = false;
-            }
-        }
-    });
-
-    if (allFilled) {
-        if (allCorrect) {
-            showCompletionModal();
-        } else {
-            showIncorrectCompletionModal();
-        }
-    }
-}
-
-function showCompletionModal(completionTime = new Date()) {
     const completionModal = document.getElementById('completion-modal');
     const completionMessage = document.getElementById('completion-message');
     const completionShareButton = document.getElementById('completion-share-button');
@@ -357,11 +346,6 @@ function showCompletionModal(completionTime = new Date()) {
     const nextPuzzleMessage = document.getElementById('next-puzzle-message');
     
     if (completionModal && completionMessage && completionShareButton && completionOkButton && nextPuzzleMessage) {
-        const timeTaken = Math.floor((completionTime - startTime) / 1000); // in seconds
-        const minutes = Math.floor(timeTaken / 60);
-        const seconds = timeTaken % 60;
-        const timeString = `${minutes}m ${seconds}s`;
-
         completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
         completionShareButton.style.display = 'inline-block';
         completionOkButton.style.display = 'none';
@@ -383,6 +367,80 @@ function showCompletionModal(completionTime = new Date()) {
         });
         
         saveGameState(); // Save the final state
+    }
+}
+
+function resetDailyTimer() {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const lastPlayedDate = localStorage.getItem('lastPlayedDate');
+
+    if (lastPlayedDate !== currentDate) {
+        localStorage.removeItem(`startTime-${currentDate}`);
+        localStorage.setItem('lastPlayedDate', currentDate);
+    }
+}
+
+
+
+function checkGameCompletion() {
+    let allCorrect = true;
+    let allFilled = true;
+
+    clues.forEach((clue, clueIndex) => {
+        for (let i = 0; i < clue.answer.length; i++) {
+            const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+            if (!tile) continue;
+            const userInput = tile.value.trim().toLowerCase();
+            if (userInput === '') {
+                allFilled = false;
+            }
+            if (userInput !== clue.answer[i].toLowerCase()) {
+                allCorrect = false;
+            }
+        }
+    });
+
+    if (allFilled) {
+        const completionModal = document.getElementById('completion-modal');
+        const completionMessage = document.getElementById('completion-message');
+        const completionShareButton = document.getElementById('completion-share-button');
+        const completionOkButton = document.getElementById('completion-ok-button');
+        
+        if (completionModal && completionMessage && completionShareButton && completionOkButton) {
+            if (allCorrect) {
+                const currentDate = new Date().toISOString().split('T')[0];
+                updateElapsedTime(); // Update the elapsed time one last time
+                const totalElapsedTime = parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
+                
+                const minutes = Math.floor(totalElapsedTime / 60000);
+                const seconds = Math.floor((totalElapsedTime % 60000) / 1000);
+                const timeString = `${minutes}m ${seconds}s`;
+
+                completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
+                completionShareButton.style.display = 'inline-block';
+                completionOkButton.style.display = 'none';
+                completionModal.style.display = 'block';
+                
+                // Mark all tiles as correct and disable them
+                clues.forEach((clue, clueIndex) => {
+                    for (let i = 0; i < clue.answer.length; i++) {
+                        const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+                        if (tile) {
+                            tile.classList.add('correct');
+                            tile.disabled = true;
+                        }
+                    }
+                });
+                
+                clearInterval(timerInterval); // Stop the timer
+                saveGameState(); // Save the final state
+            } else {
+                completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
+                completionShareButton.style.display = 'none';
+                completionOkButton.style.display = 'inline-block';
+                completionModal.style.display = 'block';
+            }
+        }
     }
 }
 
@@ -924,7 +982,6 @@ function checkGameCompletion() {
                 completionShareButton.style.display = 'inline-block';
                 completionOkButton.style.display = 'none';
                 completionModal.style.display = 'block';
-                stopTimer();
                 
                 // Mark all tiles as correct and disable them
                 clues.forEach((clue, clueIndex) => {
@@ -949,9 +1006,6 @@ function checkGameCompletion() {
 }
 
 
-function stopTimer() {
-    clearInterval(timerInterval);
-}
 
 function sharePuzzle() {
     const shareUrl = 'https://alphabetclues.com';
@@ -971,3 +1025,29 @@ function sharePuzzle() {
         prompt('Copy this link to share:', fallbackShareText);
     }
 }
+
+function startTimer() {
+    timerInterval = setInterval(updateElapsedTime, 1000);
+}
+
+function updateElapsedTime() {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const elapsedSinceStart = now - startTime;
+    const totalElapsedTime = (parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0) + elapsedSinceStart;
+    localStorage.setItem(`totalElapsedTime-${currentDate}`, totalElapsedTime);
+    startTime = now;
+}
+
+window.addEventListener('beforeunload', function() {
+    saveGameState();
+});
+
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        clearInterval(timerInterval);
+        saveGameState();
+    } else {
+        startTimer();
+    }
+});
