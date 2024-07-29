@@ -223,25 +223,38 @@ function initializeControls() {
 }
 
 function startTimer() {
-    startTime = new Date();
+    console.log("Starting timer...");
+    clearInterval(timerInterval);
+    const currentDate = new Date().toISOString().split('T')[0];
+    const storedElapsedTime = parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
+    startTime = new Date(new Date().getTime() - storedElapsedTime);
+    
+    console.log(`Initial stored elapsed time: ${storedElapsedTime}ms`);
+
+    timerInterval = setInterval(() => {
+        const now = new Date();
+        const totalElapsedTime = now - startTime;
+        localStorage.setItem(`totalElapsedTime-${currentDate}`, totalElapsedTime);
+        
+        console.log(`Updated total elapsed time: ${totalElapsedTime}ms`);
+    }, 1000);
 }
 
 function saveGameState() {
+    console.log("Saving game state...");
     
-    updateElapsedTime();
-
     const currentDate = new Date().toISOString().split('T')[0];
     const now = new Date();
-    const elapsedTime = now - startTime;
     const gameState = {
         clues,
         revealMappings,
         difficultyLevel,
         filledTiles: [],
-        totalElapsedTime: (parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0) + elapsedTime,
+        totalElapsedTime: parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0,
         lastSaveTime: now.toISOString(),
         autocheck,
-        isCompleted: false
+        isCompleted: false,
+        completionTime: null
     };
 
     document.querySelectorAll('.tile').forEach(tile => {
@@ -256,131 +269,19 @@ function saveGameState() {
         });
     });
 
-    if (document.querySelectorAll('.tile.correct').length === document.querySelectorAll('.tile').length) {
+    const allCorrect = document.querySelectorAll('.tile.correct').length === document.querySelectorAll('.tile').length;
+    
+    if (allCorrect) {
         gameState.isCompleted = true;
+        if (!gameState.completionTime) {
+            gameState.completionTime = gameState.totalElapsedTime;
+            console.log(`Game completed. Saving completion time: ${gameState.completionTime}ms`);
+        }
     }
 
     localStorage.setItem(`gameState-${currentDate}`, JSON.stringify(gameState));
-    localStorage.setItem(`totalElapsedTime-${currentDate}`, gameState.totalElapsedTime);
+    console.log(`Saved total elapsed time: ${gameState.totalElapsedTime}ms`);
 }
-
-function loadGameState() {
-    resetDailyTimer(); // Reset timer if it's a new day
-
-    const currentDate = new Date().toISOString().split('T')[0];
-    const savedGameState = localStorage.getItem(`gameState-${currentDate}`);
-    
-    if (!savedGameState) {
-        startTime = new Date();
-        localStorage.setItem(`totalElapsedTime-${currentDate}`, '0');
-        return;
-    }
-
-    const gameState = JSON.parse(savedGameState);
-    clues = gameState.clues;
-    revealMappings = gameState.revealMappings;
-    difficultyLevel = gameState.difficultyLevel;
-    autocheck = gameState.autocheck;
-
-    startTime = new Date(); // Reset startTime to now
-
-    gameState.filledTiles.forEach(tileData => {
-        const tile = document.getElementById(`answer-${tileData.clueIndex}-${tileData.tileIndex}`);
-        if (tile) {
-            tile.value = tileData.value;
-            tile.disabled = tileData.disabled;
-            tile.dataset.revealed = tileData.revealed;
-            if (tileData.correct) {
-                tile.classList.add('correct');
-            }
-            if (tileData.incorrect) {
-                tile.classList.add('incorrect');
-            }
-        }
-    });
-
-    updateSelectedButton(difficultyLevel);
-    document.getElementById('autocheck-toggle').checked = autocheck;
-
-    if (gameState.isCompleted) {
-        document.querySelectorAll('.tile').forEach(tile => {
-            tile.disabled = true;
-            tile.classList.add('correct');
-        });
-        showCompletionModal();
-    } else {
-        // Start the timer only if the game is not completed
-        startTimer();
-    }
-
-    // Re-apply autocheck logic after loading state
-    if (autocheck) {
-        document.querySelectorAll('.tile').forEach(tile => {
-            tile.classList.remove('autocheckoff');
-            if (tile.classList.contains('correct')) {
-                tile.disabled = true;
-            }
-        });
-    } else {
-        document.querySelectorAll('.tile').forEach(tile => {
-            tile.classList.add('autocheckoff');
-            if (!gameState.isCompleted) {
-                tile.disabled = false;
-            }
-        });
-    }
-}
-
-function showCompletionModal() {
-    const currentDate = new Date().toISOString().split('T')[0];
-    const totalElapsedTime = parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
-    
-    const minutes = Math.floor(totalElapsedTime / 60000);
-    const seconds = Math.floor((totalElapsedTime % 60000) / 1000);
-    const timeString = `${minutes}m ${seconds}s`;
-
-    const completionModal = document.getElementById('completion-modal');
-    const completionMessage = document.getElementById('completion-message');
-    const completionShareButton = document.getElementById('completion-share-button');
-    const completionOkButton = document.getElementById('completion-ok-button');
-    const nextPuzzleMessage = document.getElementById('next-puzzle-message');
-    
-    if (completionModal && completionMessage && completionShareButton && completionOkButton && nextPuzzleMessage) {
-        completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
-        completionShareButton.style.display = 'inline-block';
-        completionOkButton.style.display = 'none';
-        
-        // Start the countdown for the next puzzle
-        startNextPuzzleCountdown(nextPuzzleMessage);
-        
-        completionModal.style.display = 'block';
-        
-        // Mark all tiles as correct and disable them
-        clues.forEach((clue, clueIndex) => {
-            for (let i = 0; i < clue.answer.length; i++) {
-                const tile = document.getElementById(`answer-${clueIndex}-${i}`);
-                if (tile) {
-                    tile.classList.add('correct');
-                    tile.disabled = true;
-                }
-            }
-        });
-        
-        saveGameState(); // Save the final state
-    }
-}
-
-function resetDailyTimer() {
-    const currentDate = new Date().toISOString().split('T')[0];
-    const lastPlayedDate = localStorage.getItem('lastPlayedDate');
-
-    if (lastPlayedDate !== currentDate) {
-        localStorage.removeItem(`startTime-${currentDate}`);
-        localStorage.setItem('lastPlayedDate', currentDate);
-    }
-}
-
-
 
 function checkGameCompletion() {
     let allCorrect = true;
@@ -408,8 +309,8 @@ function checkGameCompletion() {
         
         if (completionModal && completionMessage && completionShareButton && completionOkButton) {
             if (allCorrect) {
+                clearInterval(timerInterval); // Stop the timer
                 const currentDate = new Date().toISOString().split('T')[0];
-                updateElapsedTime(); // Update the elapsed time one last time
                 const totalElapsedTime = parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
                 
                 const minutes = Math.floor(totalElapsedTime / 60000);
@@ -432,7 +333,6 @@ function checkGameCompletion() {
                     }
                 });
                 
-                clearInterval(timerInterval); // Stop the timer
                 saveGameState(); // Save the final state
             } else {
                 completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
@@ -443,6 +343,138 @@ function checkGameCompletion() {
         }
     }
 }
+
+function loadGameState() {
+    console.log("Loading game state...");
+    resetDailyTimer();
+
+    const currentDate = new Date().toISOString().split('T')[0];
+    const savedGameState = localStorage.getItem(`gameState-${currentDate}`);
+    
+    if (!savedGameState) {
+        console.log("No saved game state found. Starting new game.");
+        startTime = new Date();
+        localStorage.setItem(`totalElapsedTime-${currentDate}`, '0');
+        startTimer();
+        return;
+    }
+
+    const gameState = JSON.parse(savedGameState);
+    console.log("Loaded game state:", gameState);
+
+    clues = gameState.clues;
+    revealMappings = gameState.revealMappings;
+    difficultyLevel = gameState.difficultyLevel;
+    autocheck = gameState.autocheck;
+
+    gameState.filledTiles.forEach(tileData => {
+        const tile = document.getElementById(`answer-${tileData.clueIndex}-${tileData.tileIndex}`);
+        if (tile) {
+            tile.value = tileData.value;
+            tile.disabled = tileData.disabled;
+            tile.dataset.revealed = tileData.revealed;
+            if (tileData.correct) {
+                tile.classList.add('correct');
+            }
+            if (tileData.incorrect) {
+                tile.classList.add('incorrect');
+            }
+        }
+    });
+
+    updateSelectedButton(difficultyLevel);
+    document.getElementById('autocheck-toggle').checked = autocheck;
+
+    if (gameState.isCompleted) {
+        console.log(`Loading completed game. Completion time: ${gameState.completionTime}ms`);
+        localStorage.setItem(`totalElapsedTime-${currentDate}`, gameState.completionTime);
+        document.querySelectorAll('.tile').forEach(tile => {
+            tile.disabled = true;
+            tile.classList.add('correct');
+        });
+        showCompletionModal();
+    } else {
+        const savedElapsedTime = gameState.totalElapsedTime || 0;
+        console.log(`Loading ongoing game. Saved elapsed time: ${savedElapsedTime}ms`);
+        startTime = new Date(new Date().getTime() - savedElapsedTime);
+        startTimer();
+    }
+
+    if (autocheck) {
+        document.querySelectorAll('.tile').forEach(tile => {
+            tile.classList.remove('autocheckoff');
+            if (tile.classList.contains('correct')) {
+                tile.disabled = true;
+            }
+        });
+    } else {
+        document.querySelectorAll('.tile').forEach(tile => {
+            tile.classList.add('autocheckoff');
+            if (!gameState.isCompleted) {
+                tile.disabled = false;
+            }
+        });
+    }
+}
+
+function showCompletionModal() {
+    console.log("Showing completion modal...");
+    clearInterval(timerInterval);
+
+    const currentDate = new Date().toISOString().split('T')[0];
+    const savedGameState = JSON.parse(localStorage.getItem(`gameState-${currentDate}`));
+    const completionTime = savedGameState.completionTime || parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
+    
+    console.log(`Completion time from saved state: ${completionTime}ms`);
+
+    const minutes = Math.floor(completionTime / 60000);
+    const seconds = Math.floor((completionTime % 60000) / 1000);
+    const timeString = `${minutes}m ${seconds}s`;
+
+    console.log(`Displaying completion time: ${timeString}`);
+
+    const completionModal = document.getElementById('completion-modal');
+    const completionMessage = document.getElementById('completion-message');
+    const completionShareButton = document.getElementById('completion-share-button');
+    const completionOkButton = document.getElementById('completion-ok-button');
+    const nextPuzzleMessage = document.getElementById('next-puzzle-message');
+    
+    if (completionModal && completionMessage && completionShareButton && completionOkButton && nextPuzzleMessage) {
+        completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
+        completionShareButton.style.display = 'inline-block';
+        completionOkButton.style.display = 'none';
+        
+        startNextPuzzleCountdown(nextPuzzleMessage);
+        
+        completionModal.style.display = 'block';
+        
+        clues.forEach((clue, clueIndex) => {
+            for (let i = 0; i < clue.answer.length; i++) {
+                const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+                if (tile) {
+                    tile.classList.add('correct');
+                    tile.disabled = true;
+                }
+            }
+        });
+        
+        saveGameState();
+    }
+}
+
+function resetDailyTimer() {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const lastPlayedDate = localStorage.getItem('lastPlayedDate');
+
+    if (lastPlayedDate !== currentDate) {
+        clearInterval(timerInterval);
+        localStorage.removeItem(`totalElapsedTime-${currentDate}`);
+        localStorage.removeItem(`gameState-${currentDate}`);  // Clear the entire game state
+        localStorage.setItem('lastPlayedDate', currentDate);
+    }
+}
+
+
 
 function showIncorrectCompletionModal() {
     const completionModal = document.getElementById('completion-modal');
@@ -964,43 +996,52 @@ function checkGameCompletion() {
         }
     });
 
-    if (allFilled) {
+    if (allFilled && allCorrect) {
+        clearInterval(timerInterval); // Stop the timer immediately
+        
         const completionModal = document.getElementById('completion-modal');
         const completionMessage = document.getElementById('completion-message');
         const completionShareButton = document.getElementById('completion-share-button');
         const completionOkButton = document.getElementById('completion-ok-button');
         
         if (completionModal && completionMessage && completionShareButton && completionOkButton) {
-            if (allCorrect) {
-                const endTime = new Date();
-                const timeTaken = Math.floor((endTime - startTime) / 1000); // in seconds
-                const minutes = Math.floor(timeTaken / 60);
-                const seconds = timeTaken % 60;
-                const timeString = `${minutes}m ${seconds}s`;
+            const currentDate = new Date().toISOString().split('T')[0];
+            updateElapsedTime(); // Update one last time
+            const totalElapsedTime = parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
+            
+            const minutes = Math.floor(totalElapsedTime / 60000);
+            const seconds = Math.floor((totalElapsedTime % 60000) / 1000);
+            const timeString = `${minutes}m ${seconds}s`;
 
-                completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
-                completionShareButton.style.display = 'inline-block';
-                completionOkButton.style.display = 'none';
-                completionModal.style.display = 'block';
-                
-                // Mark all tiles as correct and disable them
-                clues.forEach((clue, clueIndex) => {
-                    for (let i = 0; i < clue.answer.length; i++) {
-                        const tile = document.getElementById(`answer-${clueIndex}-${i}`);
-                        if (tile) {
-                            tile.classList.add('correct');
-                            tile.disabled = true;
-                        }
+            completionMessage.innerText = `Congratulations! You have completed the puzzle correctly in ${timeString}!`;
+            completionShareButton.style.display = 'inline-block';
+            completionOkButton.style.display = 'none';
+            completionModal.style.display = 'block';
+            
+            // Mark all tiles as correct and disable them
+            clues.forEach((clue, clueIndex) => {
+                for (let i = 0; i < clue.answer.length; i++) {
+                    const tile = document.getElementById(`answer-${clueIndex}-${i}`);
+                    if (tile) {
+                        tile.classList.add('correct');
+                        tile.disabled = true;
                     }
-                });
-                
-                saveGameState(); // Save the final state
-            } else {
-                completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
-                completionShareButton.style.display = 'none';
-                completionOkButton.style.display = 'inline-block';
-                completionModal.style.display = 'block';
-            }
+                }
+            });
+            
+            saveGameState(); // Save the final state
+        }
+    } else if (allFilled) {
+        const completionModal = document.getElementById('completion-modal');
+        const completionMessage = document.getElementById('completion-message');
+        const completionShareButton = document.getElementById('completion-share-button');
+        const completionOkButton = document.getElementById('completion-ok-button');
+        
+        if (completionModal && completionMessage && completionShareButton && completionOkButton) {
+            completionMessage.innerText = 'All tiles are filled, but some answers are incorrect.';
+            completionShareButton.style.display = 'none';
+            completionOkButton.style.display = 'inline-block';
+            completionModal.style.display = 'block';
         }
     }
 }
@@ -1026,17 +1067,14 @@ function sharePuzzle() {
     }
 }
 
-function startTimer() {
-    timerInterval = setInterval(updateElapsedTime, 1000);
-}
-
 function updateElapsedTime() {
     const currentDate = new Date().toISOString().split('T')[0];
     const now = new Date();
+    const storedElapsedTime = parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0;
     const elapsedSinceStart = now - startTime;
-    const totalElapsedTime = (parseFloat(localStorage.getItem(`totalElapsedTime-${currentDate}`)) || 0) + elapsedSinceStart;
+    const totalElapsedTime = storedElapsedTime + (isNaN(elapsedSinceStart) ? 0 : elapsedSinceStart);
     localStorage.setItem(`totalElapsedTime-${currentDate}`, totalElapsedTime);
-    startTime = now;
+    console.log(`Updated elapsed time: ${totalElapsedTime}ms (stored: ${storedElapsedTime}ms, since start: ${elapsedSinceStart}ms)`);
 }
 
 window.addEventListener('beforeunload', function() {
@@ -1044,10 +1082,16 @@ window.addEventListener('beforeunload', function() {
 });
 
 document.addEventListener('visibilitychange', function() {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const savedGameState = localStorage.getItem(`gameState-${currentDate}`);
+
     if (document.hidden) {
         clearInterval(timerInterval);
         saveGameState();
-    } else {
-        startTimer();
+    } else if (savedGameState) {
+        const gameState = JSON.parse(savedGameState);
+        if (!gameState.isCompleted) {
+            startTimer(); // Resume timer
+        }
     }
 });
